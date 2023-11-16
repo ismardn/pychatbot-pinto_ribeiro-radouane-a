@@ -107,7 +107,9 @@ def suppression_double_espaces(chaine):
     return nouvelle_chaine
 
 
-def nettoyage_complet_fichiers(nom_repertoire_nettoye):
+def nettoyage_complet_fichiers(nom_repertoire_discours, nom_repertoire_nettoye):
+    creer_fichiers_minuscule(nom_repertoire_discours, nom_repertoire_nettoye)
+    
     noms_fichiers = liste_fichiers(nom_repertoire_nettoye, "txt")
 
     for nom_fichier in noms_fichiers:
@@ -286,9 +288,7 @@ def main():
 
     prenoms_presidents = recup_prenoms_presidents(nom_fichier_presidents)
 
-    creer_fichiers_minuscule(nom_repertoire_discours, nom_repertoire_nettoye)
-
-    nettoyage_complet_fichiers(nom_repertoire_nettoye)
+    nettoyage_complet_fichiers(nom_repertoire_discours, nom_repertoire_nettoye)
 
     print(creation_matrice(nom_repertoire_nettoye))
 
