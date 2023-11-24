@@ -1,8 +1,10 @@
+import os
+
 import fonctions_matrice as fct_mat
 
 
 def fonctionnalite_1():
-    with open("README.txt", "r") as fichier:
+    with open("README.txt", "r", encoding="utf-8") as fichier:
         print(fichier.read())
 
 
@@ -13,7 +15,10 @@ def fonctionnalite_2(noms_presidents):
 
 
 def fonctionnalite_3(nom_fichier_presidents, noms_presidents):
-    with open(nom_fichier_presidents, "r") as fichier:
+    if not os.path.isfile(nom_fichier_presidents):
+        open(nom_fichier_presidents, "x")
+
+    with open(nom_fichier_presidents, "r", encoding="utf-8") as fichier:
         contenu_fichier = fichier.read()
     tous_prenoms = True
     for nom_president in noms_presidents:
@@ -23,9 +28,9 @@ def fonctionnalite_3(nom_fichier_presidents, noms_presidents):
     def modif_prenoms():
         contenu_fichier = ""
         for nom_president in noms_presidents:
-            print("Entrez le prénom que vous souhaitez associer à", nom_president, " : ", end="")
+            print("Entrez le prénom que vous souhaitez associer à", nom_president, ": ", end="")
             contenu_fichier += nom_president + ":" + input() + "\n"
-        with open(nom_fichier_presidents, "w") as fichier:
+        with open(nom_fichier_presidents, "w", encoding="utf-8") as fichier:
             fichier.write(contenu_fichier)
 
     if not tous_prenoms:
@@ -35,7 +40,7 @@ def fonctionnalite_3(nom_fichier_presidents, noms_presidents):
             modif_prenoms()
     else:
         print("Les prénoms associés aux présidents sont :")
-        with open(nom_fichier_presidents, "r") as fichier:
+        with open(nom_fichier_presidents, "r", encoding="utf-8") as fichier:
             for ligne in fichier:
                 ligne_split = ligne.split(":")
                 print("- " + ligne_split[0] + " : " + ligne_split[1], end="")
@@ -175,13 +180,10 @@ def main():
               "9. Accéder à la matrice TF-IDF\n"
               "Ou entrez \"q\" pour quitter\n")
 
-        reponse_accepte = False
-        while not reponse_accepte:
+        reponse_utilisateur = input("Entrez le numéro choisi : ")
+        while reponse_utilisateur not in [str(nombre) for nombre in range(1, 10)] + ["q"]:
+            print("\nErreur : Veuillez entrer un nombre entier entre 1 et 9, ou \"q\" pour quitter.\n")
             reponse_utilisateur = input("Entrez le numéro choisi : ")
-            if reponse_utilisateur in [str(nombre) for nombre in range(1, 10)] + ["q"]:
-                reponse_accepte = True
-            else:
-                print("\nErreur : Veuillez entrer un nombre entier entre 1 et 9\n")
 
         print()
 

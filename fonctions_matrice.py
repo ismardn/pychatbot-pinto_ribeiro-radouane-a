@@ -54,10 +54,9 @@ def creer_fichiers_minuscule(nom_repertoire_discours, nom_repertoire_nettoye):
     noms_fichiers = liste_fichiers(nom_repertoire_discours, "txt")
 
     for nom_fichier in noms_fichiers:
-        with open(nom_repertoire_discours + "/" + nom_fichier, "r") as fichier_ancien, \
-                open(nom_repertoire_nettoye + "/" + nom_fichier, "w") as fichier_nettoye:
-            for ligne in fichier_ancien:
-                fichier_nettoye.write(en_minuscule(ligne))
+        with open(nom_repertoire_discours + "/" + nom_fichier, "r", encoding="utf-8") as fichier_ancien, \
+                open(nom_repertoire_nettoye + "/" + nom_fichier, "w", encoding="utf-8") as fichier_nettoye:
+            fichier_nettoye.write(en_minuscule(fichier_ancien.read()))
 
 
 def suppression_caracteres_speciaux(chaine):
@@ -85,10 +84,10 @@ def nettoyage_complet_fichiers(nom_repertoire_discours, nom_repertoire_nettoye):
 
     for nom_fichier in noms_fichiers:
 
-        with open(nom_repertoire_nettoye + "/" + nom_fichier, "r") as fichier:
+        with open(nom_repertoire_nettoye + "/" + nom_fichier, "r", encoding="utf-8") as fichier:
             ancien_contenu = fichier.read()
 
-        with open(nom_repertoire_nettoye + "/" + nom_fichier, "w") as fichier:
+        with open(nom_repertoire_nettoye + "/" + nom_fichier, "w", encoding="utf-8") as fichier:
             fichier.write(suppression_caracteres_speciaux(ancien_contenu))
 
 
@@ -112,7 +111,7 @@ def calcul_tf_total(nom_repertoire):
 
     for nom_fichier in noms_fichiers:
 
-        with open(nom_repertoire + "/" + nom_fichier, "r") as fichier:
+        with open(nom_repertoire + "/" + nom_fichier, "r", encoding="utf-8") as fichier:
             liste_tf.append(calcul_tf(fichier.read()))
 
     return liste_tf
@@ -125,7 +124,7 @@ def calcul_idf_total(nom_repertoire):
     contenu_fichiers = ""
 
     for nom_fichier in noms_fichiers:
-        with open(nom_repertoire + "/" + nom_fichier, "r") as fichier:
+        with open(nom_repertoire + "/" + nom_fichier, "r", encoding="utf-8") as fichier:
             contenu_fichier = fichier.read()
             contenu_fichiers_liste.append(contenu_fichier.split())
             contenu_fichiers += contenu_fichier + " "
@@ -179,7 +178,7 @@ def creation_matrice(nom_repertoire):
 
         tf_idf_mot = []
 
-        with open(nom_repertoire + "/" + noms_fichiers[indice_fichier], "r") as fichier:
+        with open(nom_repertoire + "/" + noms_fichiers[indice_fichier], "r", encoding="utf-8") as fichier:
             contenu_fichier_split = fichier.read().split()
 
             valeur_tf_fichier = calcul_tf_total(nom_repertoire)[indice_fichier]
@@ -204,7 +203,7 @@ def tf_idf_nul(return_matrice):
         somme_tf_idf = 0
         for indice_fichier in range(len(noms_fichiers)):
             somme_tf_idf += matrice[indice_mot][indice_fichier]
-        moyenne_tf_idf_mots.append(somme_tf_idf)
+        moyenne_tf_idf_mots.append(somme_tf_idf / len(noms_fichiers))
 
     liste_valeurs_min = []
 
@@ -224,7 +223,7 @@ def tf_idf_max(return_matrice):
         somme_tf_idf = 0
         for indice_fichier in range(len(noms_fichiers)):
             somme_tf_idf += matrice[indice_mot][indice_fichier]
-        moyenne_tf_idf_mots.append(somme_tf_idf)
+        moyenne_tf_idf_mots.append(somme_tf_idf / len(noms_fichiers))
 
     liste_valeurs_max = [-1, []]
 
@@ -245,7 +244,7 @@ def mot_max_president(nom_repertoire, nom_president):
 
     for nom_fichier in noms_fichiers:
         if nom_president in nom_fichier:
-            with open(nom_repertoire + "/" + nom_fichier, "r") as fichier:
+            with open(nom_repertoire + "/" + nom_fichier, "r", encoding="utf-8") as fichier:
                 contenu_fichiers = fichier.read() + " "
 
     liste_valeurs_max = [-1, []]
@@ -268,7 +267,7 @@ def mot_enonce_president(nom_repertoire, mot_recherche):
     dict_pres_mot = {}
 
     for nom_fichier in noms_fichiers:
-        with open(nom_repertoire + "/" + nom_fichier, "r") as fichier:
+        with open(nom_repertoire + "/" + nom_fichier, "r", encoding="utf-8") as fichier:
             contenu_fichier_split = fichier.read().split()
 
             nom_president = retirer_caracteres_nom_fichier(nom_fichier)
@@ -299,7 +298,7 @@ def premier_president_mot(nom_repertoire, mot_recherche):
     dict_pres_mot = {}
 
     for nom_fichier in noms_fichiers:
-        with open(nom_repertoire + "/" + nom_fichier, "r") as fichier:
+        with open(nom_repertoire + "/" + nom_fichier, "r", encoding="utf-8") as fichier:
             contenu_fichier_split = fichier.read().split()
 
             nom_president = retirer_caracteres_nom_fichier(nom_fichier)
