@@ -1,0 +1,6 @@
+Chirac:Jacques
+Mitterrand:test
+Hollande:
+Sarkozy:
+Giscard dEstaing:
+Macron:
