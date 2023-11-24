@@ -4,7 +4,7 @@ Le dossier contient :
 - Un fichier README.txt (vous êtes en train de le lire)
 - Deux répertoires "speeches" et "cleaned", contenant respectivement les discours des présidents, et ces discours sans caractères spéciaux
 - Un fichier "presidents.txt", contenant (ou non) les prénoms associés aux noms des présidents
-- Un fichier Python "fonctions_matrice.py", contenant l'ensemble des fonctions à developper autour de la matrice TF-IDF et le traitement des fichiers
+- Un fichier Python "fonctions_matrice.py", contenant l'ensemble des fonctions à développer autour de la matrice TF-IDF et le traitement des fichiers
 - Un fichier Python "main.py", exécutant l'ensemble des fonctions nécessaires à la création de la matrice, ainsi que l'affichage du menu pour accéder aux fonctionnalités
 
 Notice d'utilisation :
