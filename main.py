@@ -3,10 +3,7 @@ import fonctions_matrice as fct_mat
 
 def fonctionnalite_1():
     with open("README.txt", "r") as fichier:
-        contenu_fichier = ""
-        for ligne in fichier:
-            contenu_fichier += ligne
-    print(contenu_fichier)
+        print(fichier.read())
 
 
 def fonctionnalite_2(noms_presidents):
@@ -17,9 +14,7 @@ def fonctionnalite_2(noms_presidents):
 
 def fonctionnalite_3(nom_fichier_presidents, noms_presidents):
     with open(nom_fichier_presidents, "r") as fichier:
-        contenu_fichier = ""
-        for ligne in fichier:
-            contenu_fichier += ligne
+        contenu_fichier = fichier.read()
     tous_prenoms = True
     for nom_president in noms_presidents:
         if nom_president not in contenu_fichier:

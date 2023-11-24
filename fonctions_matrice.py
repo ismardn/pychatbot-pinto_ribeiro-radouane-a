@@ -86,9 +86,7 @@ def nettoyage_complet_fichiers(nom_repertoire_discours, nom_repertoire_nettoye):
     for nom_fichier in noms_fichiers:
 
         with open(nom_repertoire_nettoye + "/" + nom_fichier, "r") as fichier:
-            ancien_contenu = ""
-            for ligne in fichier:
-                ancien_contenu += ligne
+            ancien_contenu = fichier.read()
 
         with open(nom_repertoire_nettoye + "/" + nom_fichier, "w") as fichier:
             fichier.write(suppression_caracteres_speciaux(ancien_contenu))
@@ -114,11 +112,8 @@ def calcul_tf_total(nom_repertoire):
 
     for nom_fichier in noms_fichiers:
 
-        contenu_fichier = ""
         with open(nom_repertoire + "/" + nom_fichier, "r") as fichier:
-            for ligne in fichier:
-                contenu_fichier += ligne
-        liste_tf.append(calcul_tf(contenu_fichier))
+            liste_tf.append(calcul_tf(fichier.read()))
 
     return liste_tf
 
@@ -127,17 +122,15 @@ def calcul_idf_total(nom_repertoire):
     noms_fichiers = liste_fichiers(nom_repertoire, "txt")
 
     contenu_fichiers_liste = []
-    contenu_fichiers_integral = ""
+    contenu_fichiers = ""
 
     for nom_fichier in noms_fichiers:
         with open(nom_repertoire + "/" + nom_fichier, "r") as fichier:
-            contenu_fichier = ""
-            for ligne in fichier:
-                contenu_fichier += ligne
+            contenu_fichier = fichier.read()
             contenu_fichiers_liste.append(contenu_fichier.split())
-            contenu_fichiers_integral += contenu_fichier + " "
+            contenu_fichiers += contenu_fichier + " "
 
-    chaine_split = contenu_fichiers_integral.split()
+    chaine_split = contenu_fichiers.split()
     liste_mots = []
 
     for mot in chaine_split:
@@ -187,10 +180,7 @@ def creation_matrice(nom_repertoire):
         tf_idf_mot = []
 
         with open(nom_repertoire + "/" + noms_fichiers[indice_fichier], "r") as fichier:
-            contenu_fichier = ""
-            for ligne in fichier:
-                contenu_fichier += ligne
-            contenu_fichier_split = contenu_fichier.split()
+            contenu_fichier_split = fichier.read().split()
 
             valeur_tf_fichier = calcul_tf_total(nom_repertoire)[indice_fichier]
 
@@ -256,9 +246,7 @@ def mot_max_president(nom_repertoire, nom_president):
     for nom_fichier in noms_fichiers:
         if nom_president in nom_fichier:
             with open(nom_repertoire + "/" + nom_fichier, "r") as fichier:
-                for ligne in fichier:
-                    contenu_fichiers += ligne
-            contenu_fichiers += " "
+                contenu_fichiers = fichier.read() + " "
 
     liste_valeurs_max = [-1, []]
 
@@ -281,11 +269,7 @@ def mot_enonce_president(nom_repertoire, mot_recherche):
 
     for nom_fichier in noms_fichiers:
         with open(nom_repertoire + "/" + nom_fichier, "r") as fichier:
-            contenu_fichier = ""
-            for ligne in fichier:
-                contenu_fichier += ligne
-
-            contenu_fichier_split = contenu_fichier.split()
+            contenu_fichier_split = fichier.read().split()
 
             nom_president = retirer_caracteres_nom_fichier(nom_fichier)
 
@@ -316,11 +300,7 @@ def premier_president_mot(nom_repertoire, mot_recherche):
 
     for nom_fichier in noms_fichiers:
         with open(nom_repertoire + "/" + nom_fichier, "r") as fichier:
-            contenu_fichier = ""
-            for ligne in fichier:
-                contenu_fichier += ligne
-
-            contenu_fichier_split = contenu_fichier.split()
+            contenu_fichier_split = fichier.read().split()
 
             nom_president = retirer_caracteres_nom_fichier(nom_fichier)
 
