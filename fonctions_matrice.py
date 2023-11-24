@@ -22,7 +22,7 @@ def retirer_caracteres_nom_fichier(nom_fichier):
     return nom_president
 
 
-def recup_noms_presidents(nom_fichier_presidents, nom_repertoire):
+def recup_noms_presidents(nom_repertoire):
     noms_fichiers = liste_fichiers(nom_repertoire, "txt")
 
     noms_presidents_temp = []
