@@ -150,7 +150,7 @@ def calcul_idf_total(nom_repertoire):       #Fonction permettant de calculer le 
     return dictionnaire
 
 
-def transposee_matrice(matrice):
+def transposee_matrice(matrice):    #Fonction pour réalisé la transposée d'une matrice qui consiste à inverse les lignes et les colonnes de celle ci
     nouvelle_matrice = []
 
     for indice_colonne in range(len(matrice[0])):
@@ -158,14 +158,14 @@ def transposee_matrice(matrice):
         ligne_nouvelle_matrice = []
 
         for indice_ligne in range(len(matrice)):
-            ligne_nouvelle_matrice.append(matrice[indice_ligne][indice_colonne])
+            ligne_nouvelle_matrice.append(matrice[indice_ligne][indice_colonne]) # Changement réalisé ici
 
         nouvelle_matrice.append(ligne_nouvelle_matrice)
 
     return nouvelle_matrice
 
 
-def creation_matrice(nom_repertoire):
+def creation_matrice(nom_repertoire):       #Création de notre matrcice contenant le noms des fichiers + tous les mots présents dans les fichiers et leurs score TF-IDF associé.
     noms_fichiers = liste_fichiers(nom_repertoire, "txt")
 
     valeur_idf_fichier = calcul_idf_total(nom_repertoire)
@@ -181,11 +181,11 @@ def creation_matrice(nom_repertoire):
         with open(nom_repertoire + "/" + noms_fichiers[indice_fichier], "r", encoding="utf-8") as fichier:
             contenu_fichier_split = fichier.read().split()
 
-            valeur_tf_fichier = calcul_tf_total(nom_repertoire)[indice_fichier]
+            valeur_tf_fichier = calcul_tf_total(nom_repertoire)[indice_fichier]     #Utilisation de la fonction TF
 
             for mot in liste_mots:
                 if mot in contenu_fichier_split:
-                    tf_idf_mot.append(valeur_idf_fichier[mot] * valeur_tf_fichier[mot])
+                    tf_idf_mot.append(valeur_idf_fichier[mot] * valeur_tf_fichier[mot])         #Mise en place de la fonction TF-IDF
                 else:
                     tf_idf_mot.append(0.)
 
@@ -194,7 +194,7 @@ def creation_matrice(nom_repertoire):
     return noms_fichiers, liste_mots, transposee_matrice(matrice)
 
 
-def tf_idf_nul(return_matrice):
+def tf_idf_nul(return_matrice):       #Fonction renvoyant les mots avec un score TF-IDF nul
     noms_fichiers, liste_mots, matrice = return_matrice
 
     moyenne_tf_idf_mots = []
@@ -208,13 +208,13 @@ def tf_idf_nul(return_matrice):
     liste_valeurs_min = []
 
     for indice_valeur_min in range(len(moyenne_tf_idf_mots)):
-        if moyenne_tf_idf_mots[indice_valeur_min] == 0.:
+        if moyenne_tf_idf_mots[indice_valeur_min] == 0.:        #Comparaison du score TF-IDF à 0, pour trouver les mots avec un score nul
             liste_valeurs_min.append(liste_mots[indice_valeur_min])
 
     return liste_valeurs_min
 
 
-def tf_idf_max(return_matrice):
+def tf_idf_max(return_matrice):             #Fonction renvoyant les mots avec le score TF-IDF le plus élevé.
     noms_fichiers, liste_mots, matrice = return_matrice
 
     moyenne_tf_idf_mots = []
@@ -228,16 +228,16 @@ def tf_idf_max(return_matrice):
     liste_valeurs_max = [-1, []]
 
     for valeur in moyenne_tf_idf_mots:
-        if valeur > liste_valeurs_max[0]:
+        if valeur > liste_valeurs_max[0]:          #Mise en place d'une valeur max
             liste_valeurs_max = [valeur, []]
             for indice_valeur_max in range(len(moyenne_tf_idf_mots)):
-                if moyenne_tf_idf_mots[indice_valeur_max] == valeur:
+                if moyenne_tf_idf_mots[indice_valeur_max] == valeur:            #Comparaison du score de chaque mot avec cette valeur max.
                     liste_valeurs_max[1].append(liste_mots[indice_valeur_max])
 
     return liste_valeurs_max[1]
 
 
-def mot_max_president(nom_repertoire, nom_president):
+def mot_max_president(nom_repertoire, nom_president):       #Fonction renvoyant le mot le plus utilisé par un président
     noms_fichiers = liste_fichiers(nom_repertoire, "txt")
 
     contenu_fichiers = ""
@@ -251,7 +251,7 @@ def mot_max_president(nom_repertoire, nom_president):
 
     tf_contenu_fichiers = calcul_tf(contenu_fichiers)
 
-    for mot in tf_contenu_fichiers:
+    for mot in tf_contenu_fichiers:             #Reprise de la même base de code que pour la fonction TF-IDF max.
         if tf_contenu_fichiers[mot] > liste_valeurs_max[0]:
             liste_valeurs_max = [tf_contenu_fichiers[mot], []]
             for mot_max in tf_contenu_fichiers:
@@ -292,7 +292,7 @@ def mot_enonce_president(nom_repertoire, mot_recherche):
     return [nom_president for nom_president in dict_pres_mot], liste_pres_max
 
 
-def premier_president_mot(nom_repertoire, mot_recherche):
+def premier_president_mot(nom_repertoire, mot_recherche):  #Fonction permettrant de trouver le ppremier président à avoir parler d'un mot ou d'un sujet
     noms_fichiers = liste_fichiers(nom_repertoire, "txt")
 
     dict_pres_mot = {}
@@ -322,7 +322,7 @@ def premier_president_mot(nom_repertoire, mot_recherche):
         return liste_pres[1]
 
 
-def mots_tous_presidents(return_matrice, nom_repertoire_nettoye):
+def mots_tous_presidents(return_matrice, nom_repertoire_nettoye):       #Fonction permettant de renvoyer les mots que tout les président on évoqué au moins une fois.
     noms_fichiers, liste_mots, matrice = return_matrice
 
     liste_mots_non_important = tf_idf_nul(return_matrice)
