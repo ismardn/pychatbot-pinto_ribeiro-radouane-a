@@ -22,7 +22,7 @@ def retirer_caracteres_nom_fichier(nom_fichier):
     return nom_president
 
 
-def recup_noms_presidents(nom_repertoire):# Fonction pour remettre au propre la liste du nom des présidents en retirant les numéruos et les doublons
+def recup_noms_presidents(nom_repertoire):    # Fonction pour remettre au propre la liste du nom des présidents en retirant les numéruos et les doublons
     noms_fichiers = liste_fichiers(nom_repertoire, "txt")
 
     noms_presidents_temp = []
@@ -38,11 +38,11 @@ def recup_noms_presidents(nom_repertoire):# Fonction pour remettre au propre la 
     return noms_presidents
 
 
-def en_minuscule(chaine):#Transformation des textes des fichiers: mise en forme des textes en mettant tout en minuscule.
+def en_minuscule(chaine):     #Transformation des textes des fichiers: mise en forme des textes en mettant tout en minuscule.
     nouvelle_chaine = ""
 
     for caractere in chaine:
-        if ord("A") <= ord(caractere) <= ord('Z'):
+        if ord("A") <= ord(caractere) <= ord('Z'): #Utilisation du code ASCII
             nouvelle_chaine += chr(ord(caractere) + ord("a") - ord("A"))
         else:
             nouvelle_chaine += caractere
@@ -59,7 +59,7 @@ def creer_fichiers_minuscule(nom_repertoire_discours, nom_repertoire_nettoye):
             fichier_nettoye.write(en_minuscule(fichier_ancien.read()))
 
 
-def suppression_caracteres_speciaux(chaine):#Remise en forme des textes en enlevant les caractères spéciaux ainsi que les numéros.
+def suppression_caracteres_speciaux(chaine):        #Remise en forme des textes en enlevant les caractères spéciaux ainsi que les numéros.
     caracteres_speciaux = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
                            ',', '-', "'", '.', '!', '?', '_', ':', '\n', '"', ';', '`']
 
@@ -91,11 +91,11 @@ def nettoyage_complet_fichiers(nom_repertoire_discours, nom_repertoire_nettoye):
             fichier.write(suppression_caracteres_speciaux(ancien_contenu))
 
 
-def calcul_tf(chaine):
+def calcul_tf(chaine):      #Fonction pour calculer le TF
     liste_mots = chaine.split()
     dictionnaire = {}
 
-    for mot in liste_mots:
+    for mot in liste_mots:      #Mise en place d'un dictionnaire associant à chaque mot son score
         if mot not in dictionnaire:
             dictionnaire[mot] = 1
         else:
@@ -104,7 +104,7 @@ def calcul_tf(chaine):
     return dictionnaire
 
 
-def calcul_tf_total(nom_repertoire):
+def calcul_tf_total(nom_repertoire):        # Application de la fonction TF à tout les fichiers.
     liste_tf = []
 
     noms_fichiers = liste_fichiers(nom_repertoire, "txt")
@@ -117,7 +117,7 @@ def calcul_tf_total(nom_repertoire):
     return liste_tf
 
 
-def calcul_idf_total(nom_repertoire):
+def calcul_idf_total(nom_repertoire):       #Fonction permettant de calculer le score IDF de chaque mot
     noms_fichiers = liste_fichiers(nom_repertoire, "txt")
 
     contenu_fichiers_liste = []
@@ -136,7 +136,7 @@ def calcul_idf_total(nom_repertoire):
         if mot not in liste_mots:
             liste_mots.append(mot)
 
-    dictionnaire = {}
+    dictionnaire = {}       #Réutilisation d'un dictionnaire ici aussi pour associer à chaque mot son score
 
     for mot in liste_mots:
 
