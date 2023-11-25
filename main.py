@@ -1,5 +1,4 @@
 import os
-
 import fonctions_matrice as fct_mat
 
 
@@ -58,7 +57,7 @@ def fonctionnalite_4(return_matrice_tf_idf):
 
 
 def fonctionnalite_5(return_matrice_tf_idf):
-    print("Les mots les plus importants dans le corpus de documents sont :")
+    print("Les mots ayant le score TF-IDF le plus élevé sont :")
     for mot in fct_mat.tf_idf_max(return_matrice_tf_idf):
         print("- " + mot)
 
@@ -105,7 +104,13 @@ def fonctionnalite_8(nom_repertoire_nettoye):
           fct_mat.premier_president_mot(nom_repertoire_nettoye, input_mot))
 
 
-def fonctionnalite_9(return_matrice_tf_idf):
+def fonctionnalite_9(return_matrice, nom_repertoire_nettoye):
+    print("Les mots évoqués par tous les présidents (sauf les mots dits \"non importants\") sont :")
+    for mot in fct_mat.mots_tous_presidents(return_matrice, nom_repertoire_nettoye):
+        print("- " + mot)
+
+
+def fonctionnalite_10(return_matrice_tf_idf):
     noms_fichiers, liste_mots, matrice = return_matrice_tf_idf
 
     def taille_mot_plus_long(liste_mots):
@@ -168,21 +173,22 @@ def main():
     demander_numero = True
 
     while demander_numero:
-        print("\nPour accéder aux différents menus, veuillez entrer le numéro associé :\n\n"
+        print("\nPour accéder aux différentes fonctionnalités, veuillez entrer le numéro associé à celles-ci :\n\n"
               "1. Lire la notice d'utilisation\n"
               "2. Accéder aux noms des présidents\n"
               "3. Changer/Accéder aux prénoms des présidents\n"
-              "4. Afficher la liste des mots les moins importants dans le corpus de documents\n"
-              "5. Afficher la liste de mot ayant le score TF-IDF le plus élevé\n"
-              "6. Afficher la liste de mot les plus répétés par le président choisi\n"
+              "4. Afficher les mots les moins importants dans le corpus de documents\n"
+              "5. Afficher les mots ayant le score TF-IDF le plus élevé\n"
+              "6. Afficher les mots les plus répétés par le président choisi\n"
               "7. Afficher les noms des présidents qui ont parlé du mot choisi\n"
               "8. Afficher le premier président à utiliser le mot choisi\n"
-              "9. Accéder à la matrice TF-IDF\n"
+              "9. Afficher les mots évoqués par tous les présidents (sauf les mots dits \"non importants\")\n"
+              "10. Accéder à la matrice TF-IDF\n"
               "Ou entrez \"q\" pour quitter\n")
 
         reponse_utilisateur = input("Entrez le numéro choisi : ")
-        while reponse_utilisateur not in [str(nombre) for nombre in range(1, 10)] + ["q"]:
-            print("\nErreur : Veuillez entrer un nombre entier entre 1 et 9, ou \"q\" pour quitter.\n")
+        while reponse_utilisateur not in [str(nombre) for nombre in range(1, 11)] + ["q"]:
+            print("\nErreur : Veuillez entrer un nombre entier entre 1 et 10, ou \"q\" pour quitter.\n")
             reponse_utilisateur = input("Entrez le numéro choisi : ")
 
         print()
@@ -212,7 +218,10 @@ def main():
             fonctionnalite_8(NOM_REPERTOIRE_NETTOYE)
 
         elif reponse_utilisateur == "9":
-            fonctionnalite_9(return_matrice_tf_idf)
+            fonctionnalite_9(return_matrice_tf_idf, NOM_REPERTOIRE_NETTOYE)
+
+        elif reponse_utilisateur == "10":
+            fonctionnalite_10(return_matrice_tf_idf)
 
         elif reponse_utilisateur == "q":
             demander_numero = False

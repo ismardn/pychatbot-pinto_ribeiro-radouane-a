@@ -322,6 +322,38 @@ def premier_president_mot(nom_repertoire, mot_recherche):
         return liste_pres[1]
 
 
-########################################################################################################################
-# Question 6 impossible ################################################################################################
-########################################################################################################################
+def mots_tous_presidents(return_matrice, nom_repertoire_nettoye):
+    noms_fichiers, liste_mots, matrice = return_matrice
+
+    liste_mots_non_important = tf_idf_nul(return_matrice)
+
+    liste_contenu_fichier_split = []
+
+    for nom_fichier in noms_fichiers:
+        with open(nom_repertoire_nettoye + "/" + nom_fichier, "r", encoding="utf-8") as fichier:
+            liste_contenu_fichier_split.append(fichier.read().split())
+
+    liste_mots_tous_president = []
+
+    for mot in liste_mots:
+        mot_in_fichiers = [mot in liste_contenu_fichier_split[indice_fichier] for indice_fichier in range(len(noms_fichiers))]
+
+        dict_pres = {}
+        for nom_president in recup_noms_presidents(nom_repertoire_nettoye):
+            dict_pres[nom_president] = [[nom_fichier for nom_fichier in noms_fichiers if nom_president in nom_fichier],
+                                        False
+                                        ]
+            for indice_fichier in range(len(noms_fichiers)):
+                if nom_president in noms_fichiers[indice_fichier] and mot_in_fichiers[indice_fichier]:
+                    dict_pres[nom_president][1] = True
+
+        tous_pres = True
+
+        for nom_president in dict_pres:
+            if not dict_pres[nom_president][1]:
+                tous_pres = False
+
+        if tous_pres and mot not in liste_mots_non_important:
+            liste_mots_tous_president.append(mot)
+
+    return liste_mots_tous_president
