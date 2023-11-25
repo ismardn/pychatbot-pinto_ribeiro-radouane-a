@@ -2,7 +2,7 @@ import os
 import math
 
 
-def liste_fichiers(repertoire, extension):
+def liste_fichiers(repertoire, extension):   #Création d'une liste comprenant tout les noms des fichers. txt présent dans le corpus#
     noms_fichiers = []
     for nom_fichier in os.listdir(repertoire):
         if nom_fichier.endswith(extension):
@@ -22,7 +22,7 @@ def retirer_caracteres_nom_fichier(nom_fichier):
     return nom_president
 
 
-def recup_noms_presidents(nom_repertoire):
+def recup_noms_presidents(nom_repertoire):# Fonction pour remettre au propre la liste du nom des présidents en retirant les numéruos et les doublons
     noms_fichiers = liste_fichiers(nom_repertoire, "txt")
 
     noms_presidents_temp = []
@@ -38,7 +38,7 @@ def recup_noms_presidents(nom_repertoire):
     return noms_presidents
 
 
-def en_minuscule(chaine):
+def en_minuscule(chaine):#Transformation des textes des fichiers: mise en forme des textes en mettant tout en minuscule.
     nouvelle_chaine = ""
 
     for caractere in chaine:
@@ -59,7 +59,7 @@ def creer_fichiers_minuscule(nom_repertoire_discours, nom_repertoire_nettoye):
             fichier_nettoye.write(en_minuscule(fichier_ancien.read()))
 
 
-def suppression_caracteres_speciaux(chaine):
+def suppression_caracteres_speciaux(chaine):#Remise en forme des textes en enlevant les caractères spéciaux ainsi que les numéros.
     caracteres_speciaux = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
                            ',', '-', "'", '.', '!', '?', '_', ':', '\n', '"', ';', '`']
 
