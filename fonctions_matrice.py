@@ -17,7 +17,7 @@ def retirer_caracteres_nom_fichier(nom_fichier):
     nom_president_temp = nom_fichier[len("Nomination_"):len(nom_fichier) - len(".txt")]
     nom_president = ""
     for caractere in nom_president_temp:
-        if caractere not in "0123456789":
+        if caractere not in "0123456789":       #Mise en place de tout les caractères à enlever
             nom_president += caractere
 
     return nom_president
@@ -53,7 +53,7 @@ def en_minuscule(chaine):
     return nouvelle_chaine
 
 
-def creer_fichiers_minuscule(nom_repertoire_discours, nom_repertoire_nettoye):
+def creer_fichiers_minuscule(nom_repertoire_discours, nom_repertoire_nettoye):    #Application de la fonction précedente à tout les fichiers
     noms_fichiers = liste_fichiers(nom_repertoire_discours, "txt")
 
     for nom_fichier in noms_fichiers:
@@ -70,7 +70,7 @@ def suppression_caracteres_speciaux(chaine):
     nouvelle_chaine = ""
 
     for caractere in chaine:
-        if caractere in caracteres_speciaux:
+        if caractere in caracteres_speciaux:            # Remplacement des caractères spéciaux par des espaces
             nouvelle_chaine += " "
         else:
             nouvelle_chaine += caractere
@@ -270,7 +270,7 @@ def mot_max_president(nom_repertoire, nom_president):  # Fonction renvoyant le m
     return liste_valeurs_max[1]
 
 
-def mot_enonce_president(nom_repertoire, mot_recherche):
+def mot_enonce_president(nom_repertoire, mot_recherche):        #Fonction renvoyant le président ayant énonce le mot recherche le plus de fois
     noms_fichiers = liste_fichiers(nom_repertoire, "txt")
 
     dict_pres_mot = {}
@@ -301,7 +301,7 @@ def mot_enonce_president(nom_repertoire, mot_recherche):
     return [nom_president for nom_president in dict_pres_mot], liste_pres_max
 
 
-# Fonction permettrant de trouver le ppremier président à avoir parler d'un mot ou d'un sujet
+# Fonction permettrant de trouver le premier président à avoir parler d'un mot ou d'un sujet
 def premier_president_mot(nom_repertoire, mot_recherche):
     noms_fichiers = liste_fichiers(nom_repertoire, "txt")
 
