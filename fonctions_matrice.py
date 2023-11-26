@@ -5,8 +5,9 @@ import math
 # Création d'une liste comprenant tout les noms des fichers. txt présent dans le corpus
 def liste_fichiers(repertoire, extension):
     noms_fichiers = []
-    for nom_fichier in os.listdir(repertoire):
+    for nom_fichier in os.listdir(repertoire):  # Pour chaque fichier dans le répertoire
         if nom_fichier.endswith(extension):
+            # Si le fichier est un fichier avec l'extension ".extension", alors on l'ajoute à la liste "noms_fichiers"
             noms_fichiers.append(nom_fichier)
 
     return noms_fichiers
@@ -17,7 +18,7 @@ def retirer_caracteres_nom_fichier(nom_fichier):
     nom_president_temp = nom_fichier[len("Nomination_"):len(nom_fichier) - len(".txt")]
     nom_president = ""
     for caractere in nom_president_temp:
-        if caractere not in "0123456789":       #Mise en place de tout les caractères à enlever
+        if caractere not in "0123456789":  # Si le caractère n'est pas un chiffre alors on l'ajoute a la nouvelle chaine
             nom_president += caractere
 
     return nom_president
@@ -29,11 +30,13 @@ def recup_noms_presidents(nom_repertoire):
 
     noms_presidents_temp = []
     for nom_fichier in noms_fichiers:
+        # On applique la fonction suppressions caractères sur chaque nom de fichier
         nom_president = retirer_caracteres_nom_fichier(nom_fichier)
         noms_presidents_temp.append(nom_president)
 
     noms_presidents = []  # Suppression des doublons
     for nom_president in noms_presidents_temp:
+        # Si le nom du président n'est pas déjà dans la liste alors on l'ajoute
         if nom_president not in noms_presidents:
             noms_presidents.append(nom_president)
 
@@ -53,12 +56,15 @@ def en_minuscule(chaine):
     return nouvelle_chaine
 
 
-def creer_fichiers_minuscule(nom_repertoire_discours, nom_repertoire_nettoye):    #Application de la fonction précedente à tout les fichiers
+# Application de la fonction précédente à tout les fichiers
+def creer_fichiers_minuscule(nom_repertoire_discours, nom_repertoire_nettoye):
     noms_fichiers = liste_fichiers(nom_repertoire_discours, "txt")
 
     for nom_fichier in noms_fichiers:
+        # On ouvre tous les fichiers du programme avec l'encodage utf-8 pour bien conserver les accents, notamment ici
         with open(nom_repertoire_discours + "/" + nom_fichier, "r", encoding="utf-8") as fichier_ancien, \
                 open(nom_repertoire_nettoye + "/" + nom_fichier, "w", encoding="utf-8") as fichier_nettoye:
+            # Application de la fonction minuscule sur chaque fichier du dossier des discours
             fichier_nettoye.write(en_minuscule(fichier_ancien.read()))
 
 
@@ -70,7 +76,7 @@ def suppression_caracteres_speciaux(chaine):
     nouvelle_chaine = ""
 
     for caractere in chaine:
-        if caractere in caracteres_speciaux:            # Remplacement des caractères spéciaux par des espaces
+        if caractere in caracteres_speciaux:  # Remplacement des caractères spéciaux par des espaces
             nouvelle_chaine += " "
         else:
             nouvelle_chaine += caractere
@@ -89,9 +95,10 @@ def nettoyage_complet_fichiers(nom_repertoire_discours, nom_repertoire_nettoye):
     for nom_fichier in noms_fichiers:
 
         with open(nom_repertoire_nettoye + "/" + nom_fichier, "r", encoding="utf-8") as fichier:
-            ancien_contenu = fichier.read()
+            ancien_contenu = fichier.read()  # On stocke dans un variable l'ensemble du contenu du fichier
 
         with open(nom_repertoire_nettoye + "/" + nom_fichier, "w", encoding="utf-8") as fichier:
+            # Application de la fonction supprimant les caractères spéciaux sur chaque fichier du dossier des discours
             fichier.write(suppression_caracteres_speciaux(ancien_contenu))
 
 
@@ -101,14 +108,14 @@ def calcul_tf(chaine):  # Fonction pour calculer le TF
 
     for mot in liste_mots:  # Mise en place d'un dictionnaire associant à chaque mot son score
         if mot not in dictionnaire:
-            dictionnaire[mot] = 1
+            dictionnaire[mot] = 1  # Création d'une nouvelle clé si le mot n'existe pas
         else:
-            dictionnaire[mot] += 1
+            dictionnaire[mot] += 1  # Incrémentation de sa valeur sinon
 
     return dictionnaire
 
 
-def calcul_tf_total(nom_repertoire):  # Application de la fonction TF à tout les fichiers
+def calcul_tf_total(nom_repertoire):  # Application de la fonction "calcul_tf" à tout les fichiers
     liste_tf = []
 
     noms_fichiers = liste_fichiers(nom_repertoire, "txt")
@@ -154,7 +161,7 @@ def calcul_idf_total(nom_repertoire):  # Fonction permettant de calculer le scor
     return dictionnaire
 
 
-# Fonction pour réalisé la transposée d'une matrice qui consiste à inverse les lignes et les colonnes de celle ci
+# Fonction pour réaliser la transposée d'une matrice qui consiste à inverse les lignes et les colonnes de celle ci
 def transposee_matrice(matrice):
     nouvelle_matrice = []
 
@@ -163,7 +170,8 @@ def transposee_matrice(matrice):
         ligne_nouvelle_matrice = []
 
         for indice_ligne in range(len(matrice)):
-            ligne_nouvelle_matrice.append(matrice[indice_ligne][indice_colonne])  # Changement réalisé ici
+            # Changement des lignes/colonnes réalisé ici
+            ligne_nouvelle_matrice.append(matrice[indice_ligne][indice_colonne])
 
         nouvelle_matrice.append(ligne_nouvelle_matrice)
 
@@ -191,7 +199,6 @@ def creation_matrice(nom_repertoire):
 
             for mot in liste_mots:
                 if mot in contenu_fichier_split:
-                    # Mise en place de la fonction TF-IDF
                     tf_idf_mot.append(valeur_idf_fichier[mot] * valeur_tf_fichier[mot])
                 else:
                     tf_idf_mot.append(0.)
@@ -215,7 +222,7 @@ def tf_idf_nul(return_matrice):  # Fonction renvoyant les mots avec un score TF-
     liste_valeurs_min = []
 
     for indice_valeur_min in range(len(moyenne_tf_idf_mots)):
-        # Comparaison du score TF-IDF à 0, pour trouver les mots avec un score nul
+        # Si la moyenne du score TF-IDF d'un mot entre tous les fichiers est nulle, alors on l'ajoute à la liste
         if moyenne_tf_idf_mots[indice_valeur_min] == 0.:
             liste_valeurs_min.append(liste_mots[indice_valeur_min])
 
@@ -233,13 +240,13 @@ def tf_idf_max(return_matrice):  # Fonction renvoyant les mots avec le score TF-
             somme_tf_idf += matrice[indice_mot][indice_fichier]
         moyenne_tf_idf_mots.append(somme_tf_idf / len(noms_fichiers))
 
+    # Initialisation de la valeur max à -1, et [] correspond à l'ensemble des mots de même TF-IDF max
     liste_valeurs_max = [-1, []]
 
     for valeur in moyenne_tf_idf_mots:
-        if valeur > liste_valeurs_max[0]:  # Mise en place d'une valeur max
+        if valeur > liste_valeurs_max[0]:
             liste_valeurs_max = [valeur, []]
             for indice_valeur_max in range(len(moyenne_tf_idf_mots)):
-                # Comparaison du score de chaque mot avec cette valeur max.
                 if moyenne_tf_idf_mots[indice_valeur_max] == valeur:
                     liste_valeurs_max[1].append(liste_mots[indice_valeur_max])
 
@@ -270,7 +277,8 @@ def mot_max_president(nom_repertoire, nom_president):  # Fonction renvoyant le m
     return liste_valeurs_max[1]
 
 
-def mot_enonce_president(nom_repertoire, mot_recherche):       #Fonction renvoyant le président ayant énonce le mot recherche le plus de fois
+# Fonction renvoyant le président ayant énonce le mot recherche le plus de fois
+def mot_enonce_president(nom_repertoire, mot_recherche):
     noms_fichiers = liste_fichiers(nom_repertoire, "txt")
 
     dict_pres_mot = {}

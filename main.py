@@ -171,6 +171,7 @@ def fonctionnalite_10(return_matrice_tf_idf):
         fermer_tableau()
 
 
+# Fonction principale ##################################################################################################
 def main():
     # Initialisations des constantes
     NOM_REPERTOIRE_DISCOURS = "speeches"
