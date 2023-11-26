@@ -270,7 +270,7 @@ def mot_max_president(nom_repertoire, nom_president):  # Fonction renvoyant le m
     return liste_valeurs_max[1]
 
 
-def mot_enonce_president(nom_repertoire, mot_recherche):        #Fonction renvoyant le président ayant énonce le mot recherche le plus de fois
+def mot_enonce_president(nom_repertoire, mot_recherche):       #Fonction renvoyant le président ayant énonce le mot recherche le plus de fois
     noms_fichiers = liste_fichiers(nom_repertoire, "txt")
 
     dict_pres_mot = {}
