@@ -156,7 +156,7 @@ def calcul_idf_total(nom_repertoire):  # Fonction permettant de calculer le scor
             if mot in contenu_fichiers_liste[indice_fichier]:
                 nombre_fichiers_mot += 1
 
-        dictionnaire[mot] = math.log(len(noms_fichiers) / nombre_fichiers_mot)
+        dictionnaire[mot] = math.log10(len(noms_fichiers) / nombre_fichiers_mot)  # Calcul de l'IDF
 
     return dictionnaire
 
@@ -253,8 +253,11 @@ def tf_idf_max(return_matrice):  # Fonction renvoyant les mots avec le score TF-
     return liste_valeurs_max[1]
 
 
-def mot_max_president(nom_repertoire, nom_president):  # Fonction renvoyant le mot le plus utilisé par un président
+# Fonction renvoyant le mot le plus utilisé par un président
+def mot_max_president(nom_repertoire, return_matrice, nom_president):
     noms_fichiers = liste_fichiers(nom_repertoire, "txt")
+
+    liste_mots_non_important = tf_idf_nul(return_matrice)
 
     contenu_fichiers = ""
 
@@ -268,7 +271,7 @@ def mot_max_president(nom_repertoire, nom_president):  # Fonction renvoyant le m
     tf_contenu_fichiers = calcul_tf(contenu_fichiers)
 
     for mot in tf_contenu_fichiers:  # Reprise de la même base de code que pour la fonction TF-IDF max.
-        if tf_contenu_fichiers[mot] > liste_valeurs_max[0]:
+        if tf_contenu_fichiers[mot] > liste_valeurs_max[0] and mot not in liste_mots_non_important:
             liste_valeurs_max = [tf_contenu_fichiers[mot], []]
             for mot_max in tf_contenu_fichiers:
                 if tf_contenu_fichiers[mot_max] == liste_valeurs_max[0]:

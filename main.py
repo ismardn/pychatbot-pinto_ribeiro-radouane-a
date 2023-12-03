@@ -68,7 +68,7 @@ def fonctionnalite_5(return_matrice_tf_idf):  # Fonctionnalité n°5 (même prin
         print("- " + mot)
 
 
-def fonctionnalite_6(noms_presidents, nom_repertoire_nettoye):  # Fonctionnalité n°6
+def fonctionnalite_6(noms_presidents, return_matrice, nom_repertoire_nettoye):  # Fonctionnalité n°6
     reponse_valide = False
 
     while not reponse_valide:  # Tant que l'utilisateur n'entre pas un nom de président présent dans le corpus
@@ -76,7 +76,7 @@ def fonctionnalite_6(noms_presidents, nom_repertoire_nettoye):  # Fonctionnalit�
 
         if input_president in noms_presidents:  # Si le président existe, on affiche ses mots les plus répétés
             reponse_valide = True
-            liste_mot_max_pres = fct_mat.mot_max_president(nom_repertoire_nettoye, input_president)
+            liste_mot_max_pres = fct_mat.mot_max_president(nom_repertoire_nettoye, return_matrice, input_president)
             print("\nLes mots les plus répétés par le président", input_president, "sont :")
             for mot in liste_mot_max_pres:
                 print("- " + mot)
@@ -171,7 +171,7 @@ def fonctionnalite_10(return_matrice_tf_idf):
         fermer_tableau()
 
 
-# Fonction principale ##################################################################################################
+# --------------------------------------------- Fonction principale --------------------------------------------- #
 def main():
     # Initialisations des constantes
     NOM_REPERTOIRE_DISCOURS = "speeches"
@@ -231,7 +231,7 @@ def main():
             fonctionnalite_5(return_matrice_tf_idf)
 
         elif reponse_utilisateur == "6":
-            fonctionnalite_6(noms_presidents, NOM_REPERTOIRE_NETTOYE)
+            fonctionnalite_6(noms_presidents, return_matrice_tf_idf, NOM_REPERTOIRE_NETTOYE)
 
         elif reponse_utilisateur == "7":
             fonctionnalite_7(NOM_REPERTOIRE_NETTOYE)
