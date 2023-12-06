@@ -380,3 +380,107 @@ def mots_tous_presidents(return_matrice, nom_repertoire_nettoye):
             liste_mots_tous_president.append(mot)
 
     return liste_mots_tous_president
+
+
+def formater_question(question):
+    chaine_formatee = en_minuscule(suppression_caracteres_speciaux(question))  # Formatage de la chaîne
+    return chaine_formatee.split()
+
+
+def mot_dans_corpus(nom_repertoire, question):
+    noms_fichiers = liste_fichiers(nom_repertoire, "txt")
+
+    contenus_fichiers = ""
+    for nom_fichier in noms_fichiers:
+        with open(nom_repertoire + "/" + nom_fichier, "r") as fichier:
+            contenus_fichiers += fichier.read() + " "
+
+    contenus_fichiers_split = contenus_fichiers.split()
+
+    mot_corpus = []
+
+    question_formatee = formater_question(question)
+
+    for mot in question_formatee:
+        if mot in contenus_fichiers_split:
+            mot_corpus.append(mot)
+
+    return mot_corpus
+
+
+def tf_question(nom_repertoire, question, liste_mots_corpus):
+    question_formatee = formater_question(question)
+
+    question_chaine = ""
+    for mot in question_formatee:
+        question_chaine += mot + " "
+
+    mot_corpus = mot_dans_corpus(nom_repertoire, question_formatee)
+
+    dictionnaire = calcul_tf(question_chaine)
+
+    for mot in question_formatee:
+        if mot not in mot_corpus:
+            dictionnaire[mot] = 0
+        # else:
+        #     dictionnaire[mot] /= len(question_formatee)
+
+    return dictionnaire
+
+
+def tf_idf_question(nom_repertoire, question):
+    noms_fichiers = liste_fichiers(nom_repertoire, "txt")
+
+    question_formatee = formater_question(question)
+
+    idf_corpus = calcul_idf_total(nom_repertoire)
+
+    mot_corpus = mot_dans_corpus(nom_repertoire, question)
+
+    matrice = []
+
+    for _ in range(len(noms_fichiers)):
+        mots = []
+        for mot in question_formatee:
+            if mot in mot_corpus:
+                mots.append(idf_corpus[mot])
+        matrice.append(mots)
+
+    return mot_corpus, noms_fichiers, matrice
+
+
+def produit_scalaire(vecteur_a, vecteur_b):
+    somme = 0
+    for indice in range(len(vecteur_a)):
+        somme += vecteur_a[indice] * vecteur_b[indice]
+    return somme
+
+
+def norme_vecteur(vecteur):
+    somme = 0
+    for indice in range(len(vecteur)):
+        somme += vecteur[indice] ** 2
+    return math.sqrt(somme)
+
+
+def calcul_similarite(vecteur_a, vecteur_b):
+    return produit_scalaire(vecteur_a, vecteur_b) / (norme_vecteur(vecteur_a) * norme_vecteur(vecteur_b))
+
+
+def doc_pertinent(return_matrice_corpus, return_matrice_question):
+
+
+    noms_fichiers, liste_mots_corpus, matrice_corpus = return_matrice_corpus
+    noms_fichiers, liste_mots_question, matrice_question = return_matrice_question
+
+    similarite_max = [0, None]
+
+    matrice_corpus_transposee = transposee_matrice(matrice_corpus)
+
+    for indice_fichier in range(len(noms_fichiers)):
+        similarite = calcul_similarite(matrice_question, )
+
+
+
+
+print(tf_idf_question("cleaned", "Bonjour comment allez vous, climat histoire"))
