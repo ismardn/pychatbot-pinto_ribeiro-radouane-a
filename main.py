@@ -2,6 +2,10 @@ import os
 import fonctions_matrice as fct_mat
 
 
+def acceder_chatbot():
+    pass
+
+
 # Fonction permettant d'afficher le contenu du fichier "README.txt"
 def fonctionnalite_1():
     with open("README.txt", "r", encoding="utf-8") as fichier:
@@ -190,65 +194,87 @@ def main():
 
     print("\nBienvenue sur le ChatBot de Clément PINTO RIBEIRO et de Ismaël RADOUANE.\n")
 
-    demander_numero = True
+    demander_premier_numero = True
 
-    while demander_numero:
-        print("\nPour accéder aux différentes fonctionnalités, veuillez entrer le numéro associé à celles-ci :\n\n"
-              "1. Lire la notice d'utilisation\n"
-              "2. Accéder aux noms des présidents\n"
-              "3. Changer/Accéder aux prénoms des présidents\n"
-              "4. Afficher les mots les moins importants dans le corpus de documents\n"
-              "5. Afficher les mots ayant le score TF-IDF le plus élevé\n"
-              "6. Afficher les mots les plus répétés par le président choisi\n"
-              "7. Afficher les noms des présidents qui ont parlé du mot choisi\n"
-              "8. Afficher le premier président à utiliser le mot choisi\n"
-              "9. Afficher les mots évoqués par tous les présidents (sauf les mots dits \"non importants\")\n"
-              "10. Accéder à la matrice TF-IDF\n"
-              "Ou entrez \"q\" pour quitter\n")
+    while demander_premier_numero:
+
+        print("\nVeuillez entrer \"1\" pour accéder au ChatBot "
+              "ou entrer \"2\" pour accéder aux différentes fonctionnalités du programme.\n")
 
         reponse_utilisateur = input("Entrez le numéro choisi : ")
-        # Tant que l'utilisateur ne répond pas '1', '2', '3', '4', '5', '6', '7', '8', '9', '10' ou 'q'
-        while reponse_utilisateur not in [str(nombre) for nombre in range(1, 11)] + ["q"]:
-            print("\nErreur : Veuillez entrer un nombre entier entre 1 et 10, ou \"q\" pour quitter.\n")
+        # Tant que l'utilisateur ne répond pas '1' ou '2'
+        while reponse_utilisateur not in ["1", "2", "q"]:
+            print("\nErreur : Veuillez entrer les nombres \"1\" ou \"2\", ou \"q\" pour quitter.\n")
             reponse_utilisateur = input("Entrez le numéro choisi : ")
 
-        print()
-
-        # En fonction de la réponse de l'utilisateur, on exécute la fonctionnalité associée
         if reponse_utilisateur == "1":
-            fonctionnalite_1()
+            acceder_chatbot()
 
         elif reponse_utilisateur == "2":
-            fonctionnalite_2(noms_presidents)
 
-        elif reponse_utilisateur == "3":
-            fonctionnalite_3(NOM_FICHIER_PRESIDENTS, noms_presidents)
+            demander_deuxieme_numero = True
 
-        elif reponse_utilisateur == "4":
-            fonctionnalite_4(return_matrice_tf_idf)
+            while demander_deuxieme_numero:
 
-        elif reponse_utilisateur == "5":
-            fonctionnalite_5(return_matrice_tf_idf)
+                print("\nPour accéder aux différentes fonctionnalités, veuillez entrer le numéro associé à celles-ci :\n\n"
+                      "1. Lire la notice d'utilisation\n"
+                      "2. Accéder aux noms des présidents\n"
+                      "3. Changer/Accéder aux prénoms des présidents\n"
+                      "4. Afficher les mots les moins importants dans le corpus de documents\n"
+                      "5. Afficher les mots ayant le score TF-IDF le plus élevé\n"
+                      "6. Afficher les mots les plus répétés par le président choisi\n"
+                      "7. Afficher les noms des présidents qui ont parlé du mot choisi\n"
+                      "8. Afficher le premier président à utiliser le mot choisi\n"
+                      "9. Afficher les mots évoqués par tous les présidents (sauf les mots dits \"non importants\")\n"
+                      "10. Accéder à la matrice TF-IDF\n"
+                      "Ou entrez \"q\" pour quitter\n")
 
-        elif reponse_utilisateur == "6":
-            fonctionnalite_6(noms_presidents, return_matrice_tf_idf, NOM_REPERTOIRE_NETTOYE)
+                reponse_utilisateur = input("Entrez le numéro choisi : ")
+                # Tant que l'utilisateur ne répond pas '1', '2', '3', '4', '5', '6', '7', '8', '9', '10' ou 'q'
+                while reponse_utilisateur not in [str(nombre) for nombre in range(1, 11)] + ["q"]:
+                    print("\nErreur : Veuillez entrer un nombre entier entre 1 et 10, ou \"q\" pour quitter.\n")
+                    reponse_utilisateur = input("Entrez le numéro choisi : ")
 
-        elif reponse_utilisateur == "7":
-            fonctionnalite_7(NOM_REPERTOIRE_NETTOYE)
+                print()
 
-        elif reponse_utilisateur == "8":
-            fonctionnalite_8(NOM_REPERTOIRE_NETTOYE)
+                # En fonction de la réponse de l'utilisateur, on exécute la fonctionnalité associée
+                if reponse_utilisateur == "1":
+                    fonctionnalite_1()
 
-        elif reponse_utilisateur == "9":
-            fonctionnalite_9(return_matrice_tf_idf, NOM_REPERTOIRE_NETTOYE)
+                elif reponse_utilisateur == "2":
+                    fonctionnalite_2(noms_presidents)
 
-        elif reponse_utilisateur == "10":
-            fonctionnalite_10(return_matrice_tf_idf)
+                elif reponse_utilisateur == "3":
+                    fonctionnalite_3(NOM_FICHIER_PRESIDENTS, noms_presidents)
+
+                elif reponse_utilisateur == "4":
+                    fonctionnalite_4(return_matrice_tf_idf)
+
+                elif reponse_utilisateur == "5":
+                    fonctionnalite_5(return_matrice_tf_idf)
+
+                elif reponse_utilisateur == "6":
+                    fonctionnalite_6(noms_presidents, return_matrice_tf_idf, NOM_REPERTOIRE_NETTOYE)
+
+                elif reponse_utilisateur == "7":
+                    fonctionnalite_7(NOM_REPERTOIRE_NETTOYE)
+
+                elif reponse_utilisateur == "8":
+                    fonctionnalite_8(NOM_REPERTOIRE_NETTOYE)
+
+                elif reponse_utilisateur == "9":
+                    fonctionnalite_9(return_matrice_tf_idf, NOM_REPERTOIRE_NETTOYE)
+
+                elif reponse_utilisateur == "10":
+                    fonctionnalite_10(return_matrice_tf_idf)
+
+                elif reponse_utilisateur == "q":
+                    demander_deuxieme_numero = False  # La boucle "while" s'arrête donc le programme également
+
+                print()
 
         elif reponse_utilisateur == "q":
-            demander_numero = False  # La boucle "while" s'arrête donc le programme également
-
-        print()
+            demander_premier_numero = False
 
 
 if __name__ == "__main__":  # Exécution du programme principal (fonction "main")
