@@ -65,9 +65,12 @@ def creer_fichiers_minuscule(noms_fichiers, nom_repertoire_discours, nom_reperto
 
 
 # Remise en forme des textes en enlevant les caractères spéciaux ainsi que les numéros.
-def suppression_caracteres_speciaux(chaine):
-    caracteres_speciaux = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-                           ',', '-', "'", '.', '!', '?', '_', ':', '\n', '"', ';', '`']  # Caractères supprimés
+def suppression_caracteres_speciaux(chaine, caracteres=None):
+    if caracteres is None:
+        caracteres_speciaux = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
+                               ',', '-', "'", '.', '!', '?', '_', ':', '\n', '"', ';', '`']  # Caractères supprimés
+    else:
+        caracteres_speciaux = caracteres
 
     nouvelle_chaine = ""
 
@@ -98,15 +101,15 @@ def nettoyage_complet_fichiers(nom_repertoire_nettoye, noms_fichiers, nom_repert
 
 def calcul_tf(chaine):  # Fonction pour calculer le TF
     liste_mots = chaine.split()
-    dictionnaire = {}
+    dict_tf = {}
 
     for mot in liste_mots:  # Mise en place d'un dictionnaire associant à chaque mot son score
-        if mot not in dictionnaire:
-            dictionnaire[mot] = 1  # Création d'une nouvelle clé si le mot n'existe pas
+        if mot not in dict_tf:
+            dict_tf[mot] = 1  # Création d'une nouvelle clé si le mot n'existe pas
         else:
-            dictionnaire[mot] += 1  # Incrémentation de sa valeur sinon
+            dict_tf[mot] += 1  # Incrémentation de sa valeur sinon
 
-    return dictionnaire
+    return dict_tf
 
 
 def calcul_tf_total(noms_fichiers, nom_repertoire):  # Application de la fonction "calcul_tf" à tout les fichiers
@@ -137,7 +140,7 @@ def calcul_idf_total(noms_fichiers, nom_repertoire):  # Fonction permettant de c
         if mot not in liste_mots:
             liste_mots.append(mot)
 
-    dictionnaire = {}  # Réutilisation d'un dictionnaire ici aussi pour associer à chaque mot son score
+    dict_idf = {}  # Réutilisation d'un dictionnaire ici aussi pour associer à chaque mot son score
 
     for mot in liste_mots:
 
@@ -146,9 +149,9 @@ def calcul_idf_total(noms_fichiers, nom_repertoire):  # Fonction permettant de c
             if mot in contenu_fichiers_liste[indice_fichier]:
                 nombre_fichiers_mot += 1
 
-        dictionnaire[mot] = math.log10(len(noms_fichiers) / nombre_fichiers_mot)  # Calcul de l'IDF
+        dict_idf[mot] = math.log10(len(noms_fichiers) / nombre_fichiers_mot)  # Calcul de l'IDF
 
-    return dictionnaire
+    return dict_idf
 
 
 # Fonction pour réaliser la transposée d'une matrice qui consiste à inverse les lignes et les colonnes de celle ci
@@ -183,7 +186,7 @@ def creation_matrice_corpus(noms_fichiers, nom_repertoire):
         with open(nom_repertoire + "/" + noms_fichiers[indice_fichier], "r", encoding="utf-8") as fichier:
             contenu_fichier_split = fichier.read().split()
 
-            valeur_tf_fichier = calcul_tf_total(noms_fichiers, nom_repertoire)[indice_fichier]  # Utilisation de la fonction TF
+            valeur_tf_fichier = calcul_tf_total(noms_fichiers, nom_repertoire)[indice_fichier]
 
             for mot in liste_mots:
                 if mot in contenu_fichier_split:
@@ -365,7 +368,7 @@ def formater_question(question):
 def mot_dans_corpus(noms_fichiers, nom_repertoire, question):
     contenus_fichiers = ""
     for nom_fichier in noms_fichiers:
-        with open(nom_repertoire + "/" + nom_fichier, "r") as fichier:
+        with open(nom_repertoire + "/" + nom_fichier, "r", encoding="utf-8") as fichier:
             contenus_fichiers += fichier.read() + " "
 
     contenus_fichiers_split = contenus_fichiers.split()
@@ -381,43 +384,35 @@ def mot_dans_corpus(noms_fichiers, nom_repertoire, question):
     return mot_corpus
 
 
-def tf_question(question, noms_fichiers, nom_repertoire, liste_mots_corpus):
-    question_formatee = formater_question(question)
-
-    question_chaine = ""
-    for mot in question_formatee:
-        question_chaine += mot + " "
-
+def tf_question(noms_fichiers, nom_repertoire, question, liste_mots_corpus):
     mot_corpus = mot_dans_corpus(noms_fichiers, nom_repertoire, question)
 
-    dictionnaire = calcul_tf(question_chaine)
+    dict_tf = {}
+    for mot in liste_mots_corpus:
+        dict_tf[mot] = 0
 
-    for mot in question_formatee:
-        if mot not in mot_corpus:
-            dictionnaire[mot] = 0
-        # else:
-        #     dictionnaire[mot] /= len(question_formatee)
+    chaine_question = ""
+    for mot in mot_corpus:
+        chaine_question += mot + " "
 
-    return dictionnaire
+    dict_tf_question = calcul_tf(chaine_question)
+
+    for mot in dict_tf_question:
+        dict_tf[mot] = dict_tf_question[mot]
+
+    return dict_tf
 
 
-def tf_idf_question(question, nom_repertoire, noms_fichiers):
-    question_formatee = formater_question(question)
-
+def tf_idf_question(noms_fichiers, nom_repertoire, question, liste_mots_corpus):
     idf_corpus = calcul_idf_total(noms_fichiers, nom_repertoire)
 
-    mot_corpus = mot_dans_corpus(noms_fichiers, nom_repertoire, question)
+    tf_total = tf_question(noms_fichiers, nom_repertoire, question, liste_mots_corpus)
 
-    matrice = []
+    vecteur = []
+    for mot in liste_mots_corpus:
+        vecteur.append(idf_corpus[mot] * tf_total[mot])
 
-    for _ in range(len(noms_fichiers)):
-        mots = []
-        for mot in question_formatee:
-            if mot in mot_corpus:
-                mots.append(idf_corpus[mot])
-        matrice.append(mots)
-
-    return mot_corpus, matrice
+    return vecteur
 
 
 def produit_scalaire(vecteur_a, vecteur_b):
@@ -438,20 +433,82 @@ def calcul_similarite(vecteur_a, vecteur_b):
     return produit_scalaire(vecteur_a, vecteur_b) / (norme_vecteur(vecteur_a) * norme_vecteur(vecteur_b))
 
 
-def doc_pertinent(return_matrice_corpus, return_matrice_question):
-
-
-    noms_fichiers, liste_mots_corpus, matrice_corpus = return_matrice_corpus
-    noms_fichiers, liste_mots_question, matrice_question = return_matrice_question
-
+def doc_pertinent(noms_fichiers, vecteur_question, matrice_corpus):
     similarite_max = [0, None]
 
     matrice_corpus_transposee = transposee_matrice(matrice_corpus)
 
     for indice_fichier in range(len(noms_fichiers)):
-        similarite = calcul_similarite(matrice_question, )
+        similarite = calcul_similarite(vecteur_question, matrice_corpus_transposee[indice_fichier])
+        if similarite > similarite_max[0]:
+            similarite_max = [similarite, noms_fichiers[indice_fichier]]
+
+    return similarite_max[1]
+
+
+def tf_idf_question_max(vecteur_question, liste_mots_corpus):
+    valeurs_max = [0, 0]
+
+    for indice_valeur in range(len(vecteur_question)):
+        valeur = vecteur_question[indice_valeur]
+        if valeur > valeurs_max[0]:
+            valeurs_max = [valeur, indice_valeur]
+
+    return liste_mots_corpus[valeurs_max[1]]
+
+
+def generation_reponse(noms_fichiers, nom_repertoire_nettoye, question, liste_mots_corpus, matrice_corpus,
+                       nom_repertoire_discours):
+    vecteur_question = tf_idf_question(noms_fichiers, nom_repertoire_nettoye, question, liste_mots_corpus)
+
+    document_question = doc_pertinent(noms_fichiers, vecteur_question, matrice_corpus)
+
+    mot_tf_idf_max = tf_idf_question_max(vecteur_question, liste_mots_corpus)
+
+    with open(nom_repertoire_discours + "/" + document_question, "r", encoding="utf-8") as fichier:
+        contenu_fichier = suppression_caracteres_speciaux(en_minuscule(fichier.read()), ["\n"])
+
+    phrase_contenu_fichier = contenu_fichier.split(".")
+
+    trouve = False
+    indice_phrase = 0
+    phrase = phrase_contenu_fichier[0]
+
+    while not trouve and indice_phrase < len(phrase_contenu_fichier):
+        phrase = phrase_contenu_fichier[indice_phrase]
+        if mot_tf_idf_max in phrase:
+            trouve = True
+        indice_phrase += 1
+
+    return phrase
+
+
+def affiner_reponse():
+    if phrase[0] == " ":
+        phrase = phrase[1:]
+
+    ascii_caractere = ord(phrase[0])
+    if ord("a") <= ascii_caractere <= ord('z'):
+        phrase = chr(ascii_caractere - (ord("a") - ord("A"))) + phrase[1:] + "."
 
 
 
 
-#print(tf_idf_question("cleaned", "Bonjour comment allez vous, climat histoire"))
+
+
+
+
+
+liste_mots_test, matrice_corpus_test = creation_matrice_corpus(liste_fichiers("cleaned", "txt"), "cleaned")
+
+phrase_test = "A quoi doit-on penser quand on pense à la france ?"
+
+test_question = tf_idf_question(liste_fichiers("cleaned", "txt"),
+                  "cleaned",
+                  phrase_test,
+                  liste_mots_test)
+
+print(doc_pertinent(liste_fichiers("cleaned", "txt"), test_question, matrice_corpus_test))
+print(generation_reponse(liste_fichiers("cleaned", "txt"), "cleaned", phrase_test, liste_mots_test, matrice_corpus_test,
+                       "speeches"))
+

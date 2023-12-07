@@ -60,19 +60,21 @@ def fonctionnalite_3(nom_fichier_presidents, noms_presidents):
             modif_prenoms()
 
 
-def fonctionnalite_4(liste_mots, noms_fichiers, matrice):  # Fonctionnalité 4 (même principe que la fonctionnalité n°2)
+# Fonctionnalité n°4 (même principe que la fonctionnalité n°2)
+def fonctionnalite_4(liste_mots_corpus, noms_fichiers, matrice):
     print("Les mots les moins importants dans le corpus de documents sont :")
-    for mot in fct_mat.tf_idf_nul(liste_mots, noms_fichiers, matrice):
+    for mot in fct_mat.tf_idf_nul(liste_mots_corpus, noms_fichiers, matrice):
         print("- " + mot)
 
 
-def fonctionnalite_5(liste_mots, noms_fichiers, matrice):  # Fonctionnalité 5 (même principe que la fonctionnalité n°2)
+# Fonctionnalité n°5 (même principe que la fonctionnalité n°2)
+def fonctionnalite_5(liste_mots_corpus, noms_fichiers, matrice):
     print("Les mots ayant le score TF-IDF le plus élevé sont :")
-    for mot in fct_mat.tf_idf_max(liste_mots, noms_fichiers, matrice):
+    for mot in fct_mat.tf_idf_max(liste_mots_corpus, noms_fichiers, matrice):
         print("- " + mot)
 
 
-def fonctionnalite_6(noms_presidents, liste_mots, noms_fichiers, matrice, nom_repertoire):  # Fonctionnalité n°6
+def fonctionnalite_6(noms_presidents, liste_mots_corpus, noms_fichiers, matrice, nom_repertoire):  # Fonctionnalité n°6
     reponse_valide = False
 
     while not reponse_valide:  # Tant que l'utilisateur n'entre pas un nom de président présent dans le corpus
@@ -80,7 +82,7 @@ def fonctionnalite_6(noms_presidents, liste_mots, noms_fichiers, matrice, nom_re
 
         if nom_president in noms_presidents:  # Si le président existe, on affiche ses mots les plus répétés
             reponse_valide = True
-            liste_mot_max_pres = fct_mat.mot_max_president(liste_mots, noms_fichiers, matrice, nom_president,
+            liste_mot_max_pres = fct_mat.mot_max_president(liste_mots_corpus, noms_fichiers, matrice, nom_president,
                                                            nom_repertoire)
             print("\nLes mots les plus répétés par le président", nom_president, "sont :")
             for mot in liste_mot_max_pres:
@@ -115,14 +117,14 @@ def fonctionnalite_8(noms_fichiers, nom_repertoire):  # Fonctionnalité n°8
           fct_mat.premier_president_mot(noms_fichiers, nom_repertoire, mot_recherche))
 
 
-def fonctionnalite_9(liste_mots, noms_fichiers, matrice, nom_repertoire):  # Fonctionnalité n°9
+def fonctionnalite_9(liste_mots_corpus, noms_fichiers, matrice, nom_repertoire):  # Fonctionnalité n°9
     print("Les mots évoqués par tous les présidents (sauf les mots dits \"non importants\") sont :")
-    for mot in fct_mat.mots_tous_presidents(liste_mots, noms_fichiers, matrice, nom_repertoire):
+    for mot in fct_mat.mots_tous_presidents(liste_mots_corpus, noms_fichiers, matrice, nom_repertoire):
         print("- " + mot)
 
 
 # Fonctionnalité n°10 : Affichage de la matrice TF-IDF sous forme de tableau
-def fonctionnalite_10(noms_fichiers, liste_mots, matrice):
+def fonctionnalite_10(noms_fichiers, liste_mots_corpus, matrice):
 
     # Fonction interne permettant de retourner le mot le plus long d'une liste de mots
     def taille_mot_plus_long(mots):
@@ -141,7 +143,7 @@ def fonctionnalite_10(noms_fichiers, liste_mots, matrice):
 
     # Récupération des termes les plus long pour adapter le tableau
     noms_fichiers_plus_long = taille_mot_plus_long(noms_fichiers)
-    mot_plus_long = taille_mot_plus_long(liste_mots)
+    mot_plus_long = taille_mot_plus_long(liste_mots_corpus)
 
     # Affichage de x * " " pour correspondre à la taille du plus grand mot
     print((mot_plus_long + len("|  |")) * " ", end="")
@@ -166,8 +168,8 @@ def fonctionnalite_10(noms_fichiers, liste_mots, matrice):
     fermer_tableau()
 
     # On étend le tableau en affichant tous les mots puis en le fermant grâce à la fonction "fermer_tableau"
-    for indice_mot in range(len(liste_mots)):
-        print("| " + ajuster_espaces(liste_mots[indice_mot], mot_plus_long), end="")
+    for indice_mot in range(len(liste_mots_corpus)):
+        print("| " + ajuster_espaces(liste_mots_corpus[indice_mot], mot_plus_long), end="")
         for indice_fichier in range(len(noms_fichiers)):
             print("| " + ajuster_espaces(str(matrice[indice_mot][indice_fichier]), noms_fichiers_plus_long) +
                   " ", end="")
@@ -191,7 +193,7 @@ def main():
     fct_mat.nettoyage_complet_fichiers(NOM_REPERTOIRE_NETTOYE, noms_fichiers, NOM_REPERTOIRE_DISCOURS)
 
     # On récupère le tuple retourné par la fct "creation_matrice_corpus" (Liste des fichiers, liste des mots, matrice)
-    liste_mots, matrice_corpus = fct_mat.creation_matrice_corpus(noms_fichiers, NOM_REPERTOIRE_NETTOYE)
+    liste_mots_corpus, matrice_corpus = fct_mat.creation_matrice_corpus(noms_fichiers, NOM_REPERTOIRE_NETTOYE)
 
     print("\nBienvenue sur le ChatBot de Clément PINTO RIBEIRO et de Ismaël RADOUANE.\n")
 
@@ -249,13 +251,14 @@ def main():
                     fonctionnalite_3(NOM_FICHIER_PRESIDENTS, noms_presidents)
 
                 elif reponse_utilisateur == "4":
-                    fonctionnalite_4(liste_mots, noms_fichiers, matrice_corpus)
+                    fonctionnalite_4(liste_mots_corpus, noms_fichiers, matrice_corpus)
 
                 elif reponse_utilisateur == "5":
-                    fonctionnalite_5(liste_mots, noms_fichiers, matrice_corpus)
+                    fonctionnalite_5(liste_mots_corpus, noms_fichiers, matrice_corpus)
 
                 elif reponse_utilisateur == "6":
-                    fonctionnalite_6(noms_presidents, liste_mots, noms_fichiers, matrice_corpus, NOM_REPERTOIRE_NETTOYE)
+                    fonctionnalite_6(noms_presidents, liste_mots_corpus, noms_fichiers, matrice_corpus,
+                                     NOM_REPERTOIRE_NETTOYE)
 
                 elif reponse_utilisateur == "7":
                     fonctionnalite_7(noms_fichiers, NOM_REPERTOIRE_NETTOYE)
@@ -264,10 +267,10 @@ def main():
                     fonctionnalite_8(noms_fichiers, NOM_REPERTOIRE_NETTOYE)
 
                 elif reponse_utilisateur == "9":
-                    fonctionnalite_9(liste_mots, noms_fichiers, matrice_corpus, NOM_REPERTOIRE_NETTOYE)
+                    fonctionnalite_9(liste_mots_corpus, noms_fichiers, matrice_corpus, NOM_REPERTOIRE_NETTOYE)
 
                 elif reponse_utilisateur == "10":
-                    fonctionnalite_10(noms_fichiers, liste_mots, matrice_corpus)
+                    fonctionnalite_10(noms_fichiers, liste_mots_corpus, matrice_corpus)
 
                 elif reponse_utilisateur == "q":
                     demander_deuxieme_numero = False  # La boucle "while" s'arrête donc le programme également
