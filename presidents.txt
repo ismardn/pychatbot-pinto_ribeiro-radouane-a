@@ -1,6 +1,6 @@
 Chirac:Jacques
-Giscard dEstaing:Valéry
-Hollande:François
-Macron:Emmanuel
 Mitterrand:François
+Hollande:François
 Sarkozy:Nicolas
+Giscard dEstaing:Valéry
+Macron:Emmanuel

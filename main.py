@@ -34,13 +34,13 @@ def fonctionnalite_3(nom_fichier_presidents, noms_presidents):
             tous_prenoms = False
 
     def modif_prenoms():  # Fonction interne qui permet d'associer des prénoms aux noms des présidents
-        contenu_fichier = ""
-        for nom_president in noms_presidents:
-            print("Entrez le prénom que vous souhaitez associer à", nom_president, ": ", end="")
+        contenu_fichier_pres = ""
+        for nom_pres in noms_presidents:
+            print("Entrez le prénom que vous souhaitez associer à", nom_pres, ": ", end="")
             # On stocke les prénoms des présidents sous la forme "nom1:prénom1\nnom2:prénom2\n..."
-            contenu_fichier += nom_president + ":" + input() + "\n"
-        with open(nom_fichier_presidents, "w", encoding="utf-8") as fichier:
-            fichier.write(contenu_fichier)
+            contenu_fichier_pres += nom_pres + ":" + input() + "\n"
+        with open(nom_fichier_presidents, "w", encoding="utf-8") as fichier_pres:
+            fichier_pres.write(contenu_fichier_pres)
 
     if not tous_prenoms:
         input_utilisateur = input("Certains présidents n'ont pas de prénoms associés à leur nom.\n"
@@ -60,28 +60,29 @@ def fonctionnalite_3(nom_fichier_presidents, noms_presidents):
             modif_prenoms()
 
 
-def fonctionnalite_4(return_matrice_tf_idf):  # Fonctionnalité n°4 (même principe que la fonctionnalité n°2)
+def fonctionnalite_4(liste_mots, noms_fichiers, matrice):  # Fonctionnalité 4 (même principe que la fonctionnalité n°2)
     print("Les mots les moins importants dans le corpus de documents sont :")
-    for mot in fct_mat.tf_idf_nul(return_matrice_tf_idf):
+    for mot in fct_mat.tf_idf_nul(liste_mots, noms_fichiers, matrice):
         print("- " + mot)
 
 
-def fonctionnalite_5(return_matrice_tf_idf):  # Fonctionnalité n°5 (même principe que la fonctionnalité n°2)
+def fonctionnalite_5(liste_mots, noms_fichiers, matrice):  # Fonctionnalité 5 (même principe que la fonctionnalité n°2)
     print("Les mots ayant le score TF-IDF le plus élevé sont :")
-    for mot in fct_mat.tf_idf_max(return_matrice_tf_idf):
+    for mot in fct_mat.tf_idf_max(liste_mots, noms_fichiers, matrice):
         print("- " + mot)
 
 
-def fonctionnalite_6(noms_presidents, return_matrice, nom_repertoire_nettoye):  # Fonctionnalité n°6
+def fonctionnalite_6(noms_presidents, liste_mots, noms_fichiers, matrice, nom_repertoire):  # Fonctionnalité n°6
     reponse_valide = False
 
     while not reponse_valide:  # Tant que l'utilisateur n'entre pas un nom de président présent dans le corpus
-        input_president = input("Entrez le nom du président choisi : ")
+        nom_president = input("Entrez le nom du président choisi : ")
 
-        if input_president in noms_presidents:  # Si le président existe, on affiche ses mots les plus répétés
+        if nom_president in noms_presidents:  # Si le président existe, on affiche ses mots les plus répétés
             reponse_valide = True
-            liste_mot_max_pres = fct_mat.mot_max_president(nom_repertoire_nettoye, return_matrice, input_president)
-            print("\nLes mots les plus répétés par le président", input_president, "sont :")
+            liste_mot_max_pres = fct_mat.mot_max_president(liste_mots, noms_fichiers, matrice, nom_president,
+                                                           nom_repertoire)
+            print("\nLes mots les plus répétés par le président", nom_president, "sont :")
             for mot in liste_mot_max_pres:
                 print("- " + mot)
         else:
@@ -92,14 +93,14 @@ def fonctionnalite_6(noms_presidents, return_matrice, nom_repertoire_nettoye):  
             print(noms_presidents[-1] + ")\n")
 
 
-def fonctionnalite_7(nom_repertoire_nettoye):  # Fonctionnalité n°7
-    input_mot = input("Entrez le mot recherché : ")
-    return_mot_enonce_president = fct_mat.mot_enonce_president(nom_repertoire_nettoye, input_mot)
+def fonctionnalite_7(noms_fichiers, nom_repertoire):  # Fonctionnalité n°7
+    mot_recherche = input("Entrez le mot recherché : ")
+    return_mot_enonce_president = fct_mat.mot_enonce_president(noms_fichiers, nom_repertoire, mot_recherche)
 
     if not return_mot_enonce_president[0]:
-        print('\nAucun président n\'a énoncé le mot "' + input_mot + '".')
+        print('\nAucun président n\'a énoncé le mot "' + mot_recherche + '".')
     else:
-        print('\nLes présidents qui ont énoncé le mot "' + input_mot + '" sont :')
+        print('\nLes présidents qui ont énoncé le mot "' + mot_recherche + '" sont :')
         for nom_president in return_mot_enonce_president[0]:
             print("- " + nom_president)
 
@@ -108,26 +109,25 @@ def fonctionnalite_7(nom_repertoire_nettoye):  # Fonctionnalité n°7
             print("- " + nom_president)
 
 
-def fonctionnalite_8(nom_repertoire_nettoye):  # Fonctionnalité n°8
-    input_mot = input("Entrez le mot recherché : ")
-    print('\nLe premier président à utiliser le mot "' + input_mot + '" est :',
-          fct_mat.premier_president_mot(nom_repertoire_nettoye, input_mot))
+def fonctionnalite_8(noms_fichiers, nom_repertoire):  # Fonctionnalité n°8
+    mot_recherche = input("Entrez le mot recherché : ")
+    print('\nLe premier président à utiliser le mot "' + mot_recherche + '" est :',
+          fct_mat.premier_president_mot(noms_fichiers, nom_repertoire, mot_recherche))
 
 
-def fonctionnalite_9(return_matrice, nom_repertoire_nettoye):  # Fonctionnalité n°9
+def fonctionnalite_9(liste_mots, noms_fichiers, matrice, nom_repertoire):  # Fonctionnalité n°9
     print("Les mots évoqués par tous les présidents (sauf les mots dits \"non importants\") sont :")
-    for mot in fct_mat.mots_tous_presidents(return_matrice, nom_repertoire_nettoye):
+    for mot in fct_mat.mots_tous_presidents(liste_mots, noms_fichiers, matrice, nom_repertoire):
         print("- " + mot)
 
 
 # Fonctionnalité n°10 : Affichage de la matrice TF-IDF sous forme de tableau
-def fonctionnalite_10(return_matrice_tf_idf):
-    noms_fichiers, liste_mots, matrice = return_matrice_tf_idf
+def fonctionnalite_10(noms_fichiers, liste_mots, matrice):
 
     # Fonction interne permettant de retourner le mot le plus long d'une liste de mots
-    def taille_mot_plus_long(liste_mots):
+    def taille_mot_plus_long(mots):
         taille_max = 0
-        for mot in liste_mots:
+        for mot in mots:
             longueur_mot = len(mot)
             if longueur_mot > taille_max:
                 taille_max = longueur_mot
@@ -183,14 +183,15 @@ def main():
 
     NOM_FICHIER_PRESIDENTS = "presidents.txt"  # Noms et prénoms stockés dans ce fichier
 
+    noms_fichiers = fct_mat.liste_fichiers(NOM_REPERTOIRE_DISCOURS, "txt")
 
-    noms_presidents = fct_mat.recup_noms_presidents(NOM_REPERTOIRE_DISCOURS)
+    noms_presidents = fct_mat.recup_noms_presidents(noms_fichiers)
 
     # Nettoyage des fichiers (suppression des caractères spéciaux, etc.)
-    fct_mat.nettoyage_complet_fichiers(NOM_REPERTOIRE_DISCOURS, NOM_REPERTOIRE_NETTOYE)
+    fct_mat.nettoyage_complet_fichiers(NOM_REPERTOIRE_NETTOYE, noms_fichiers, NOM_REPERTOIRE_DISCOURS)
 
-    # On récupère le tuple retourné par la fct "creation_matrice" (Liste des fichiers, liste des mots et la matrice)
-    return_matrice_tf_idf = fct_mat.creation_matrice(NOM_REPERTOIRE_NETTOYE)
+    # On récupère le tuple retourné par la fct "creation_matrice_corpus" (Liste des fichiers, liste des mots, matrice)
+    liste_mots, matrice_corpus = fct_mat.creation_matrice_corpus(noms_fichiers, NOM_REPERTOIRE_NETTOYE)
 
     print("\nBienvenue sur le ChatBot de Clément PINTO RIBEIRO et de Ismaël RADOUANE.\n")
 
@@ -215,8 +216,8 @@ def main():
             demander_deuxieme_numero = True
 
             while demander_deuxieme_numero:
-
-                print("\nPour accéder aux différentes fonctionnalités, veuillez entrer le numéro associé à celles-ci :\n\n"
+                print("\nPour accéder aux différentes fonctionnalités, veuillez entrer le numéro associé à celles-ci :"
+                      "\n\n"
                       "1. Lire la notice d'utilisation\n"
                       "2. Accéder aux noms des présidents\n"
                       "3. Changer/Accéder aux prénoms des présidents\n"
@@ -248,33 +249,43 @@ def main():
                     fonctionnalite_3(NOM_FICHIER_PRESIDENTS, noms_presidents)
 
                 elif reponse_utilisateur == "4":
-                    fonctionnalite_4(return_matrice_tf_idf)
+                    fonctionnalite_4(liste_mots, noms_fichiers, matrice_corpus)
 
                 elif reponse_utilisateur == "5":
-                    fonctionnalite_5(return_matrice_tf_idf)
+                    fonctionnalite_5(liste_mots, noms_fichiers, matrice_corpus)
 
                 elif reponse_utilisateur == "6":
-                    fonctionnalite_6(noms_presidents, return_matrice_tf_idf, NOM_REPERTOIRE_NETTOYE)
+                    fonctionnalite_6(noms_presidents, liste_mots, noms_fichiers, matrice_corpus, NOM_REPERTOIRE_NETTOYE)
 
                 elif reponse_utilisateur == "7":
-                    fonctionnalite_7(NOM_REPERTOIRE_NETTOYE)
+                    fonctionnalite_7(noms_fichiers, NOM_REPERTOIRE_NETTOYE)
 
                 elif reponse_utilisateur == "8":
-                    fonctionnalite_8(NOM_REPERTOIRE_NETTOYE)
+                    fonctionnalite_8(noms_fichiers, NOM_REPERTOIRE_NETTOYE)
 
                 elif reponse_utilisateur == "9":
-                    fonctionnalite_9(return_matrice_tf_idf, NOM_REPERTOIRE_NETTOYE)
+                    fonctionnalite_9(liste_mots, noms_fichiers, matrice_corpus, NOM_REPERTOIRE_NETTOYE)
 
                 elif reponse_utilisateur == "10":
-                    fonctionnalite_10(return_matrice_tf_idf)
+                    fonctionnalite_10(noms_fichiers, liste_mots, matrice_corpus)
 
                 elif reponse_utilisateur == "q":
                     demander_deuxieme_numero = False  # La boucle "while" s'arrête donc le programme également
 
                 print()
 
+                if demander_deuxieme_numero:
+                    continuer = input("\nEntrez \"o\" pour accéder à une autre fonctionnalité : ")
+                    if continuer != "o":
+                        demander_deuxieme_numero = False
+
         elif reponse_utilisateur == "q":
             demander_premier_numero = False
+
+        if demander_premier_numero:
+            continuer = input("\nEntrez \"o\" pour retourner au menu principal : ")
+            if continuer != "o":
+                demander_premier_numero = False
 
 
 if __name__ == "__main__":  # Exécution du programme principal (fonction "main")

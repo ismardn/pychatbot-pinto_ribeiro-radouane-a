@@ -25,9 +25,7 @@ def retirer_caracteres_nom_fichier(nom_fichier):
 
 
 # Fonction pour remettre au propre la liste du nom des présidents en retirant les numéruos et les doublons
-def recup_noms_presidents(nom_repertoire):
-    noms_fichiers = liste_fichiers(nom_repertoire, "txt")
-
+def recup_noms_presidents(noms_fichiers):
     noms_presidents_temp = []
     for nom_fichier in noms_fichiers:
         # On applique la fonction suppressions caractères sur chaque nom de fichier
@@ -57,9 +55,7 @@ def en_minuscule(chaine):
 
 
 # Application de la fonction précédente à tout les fichiers
-def creer_fichiers_minuscule(nom_repertoire_discours, nom_repertoire_nettoye):
-    noms_fichiers = liste_fichiers(nom_repertoire_discours, "txt")
-
+def creer_fichiers_minuscule(noms_fichiers, nom_repertoire_discours, nom_repertoire_nettoye):
     for nom_fichier in noms_fichiers:
         # On ouvre tous les fichiers du programme avec l'encodage utf-8 pour bien conserver les accents, notamment ici
         with open(nom_repertoire_discours + "/" + nom_fichier, "r", encoding="utf-8") as fichier_ancien, \
@@ -84,13 +80,11 @@ def suppression_caracteres_speciaux(chaine):
     return nouvelle_chaine
 
 
-def nettoyage_complet_fichiers(nom_repertoire_discours, nom_repertoire_nettoye):
+def nettoyage_complet_fichiers(nom_repertoire_nettoye, noms_fichiers, nom_repertoire_discours):
     if not os.path.exists(nom_repertoire_nettoye):  # Création du répertoire pour fichiers nettoyés s'il n'existe pas
         os.mkdir(nom_repertoire_nettoye)
 
-    creer_fichiers_minuscule(nom_repertoire_discours, nom_repertoire_nettoye)
-
-    noms_fichiers = liste_fichiers(nom_repertoire_nettoye, "txt")
+    creer_fichiers_minuscule(noms_fichiers, nom_repertoire_discours, nom_repertoire_nettoye)
 
     for nom_fichier in noms_fichiers:
 
@@ -115,10 +109,8 @@ def calcul_tf(chaine):  # Fonction pour calculer le TF
     return dictionnaire
 
 
-def calcul_tf_total(nom_repertoire):  # Application de la fonction "calcul_tf" à tout les fichiers
+def calcul_tf_total(noms_fichiers, nom_repertoire):  # Application de la fonction "calcul_tf" à tout les fichiers
     liste_tf = []
-
-    noms_fichiers = liste_fichiers(nom_repertoire, "txt")
 
     for nom_fichier in noms_fichiers:
 
@@ -128,9 +120,7 @@ def calcul_tf_total(nom_repertoire):  # Application de la fonction "calcul_tf" �
     return liste_tf
 
 
-def calcul_idf_total(nom_repertoire):  # Fonction permettant de calculer le score IDF de chaque mot
-    noms_fichiers = liste_fichiers(nom_repertoire, "txt")
-
+def calcul_idf_total(noms_fichiers, nom_repertoire):  # Fonction permettant de calculer le score IDF de chaque mot
     contenu_fichiers_liste = []
     contenu_fichiers = ""
 
@@ -179,10 +169,8 @@ def transposee_matrice(matrice):
 
 
 # Création de notre matrcice associant un score TF-IDF pour chaque noms de fichiers en fonctions des mots
-def creation_matrice(nom_repertoire):
-    noms_fichiers = liste_fichiers(nom_repertoire, "txt")
-
-    valeur_idf_fichier = calcul_idf_total(nom_repertoire)
+def creation_matrice_corpus(noms_fichiers, nom_repertoire):
+    valeur_idf_fichier = calcul_idf_total(noms_fichiers, nom_repertoire)
 
     liste_mots = [mot for mot in valeur_idf_fichier]
 
@@ -195,7 +183,7 @@ def creation_matrice(nom_repertoire):
         with open(nom_repertoire + "/" + noms_fichiers[indice_fichier], "r", encoding="utf-8") as fichier:
             contenu_fichier_split = fichier.read().split()
 
-            valeur_tf_fichier = calcul_tf_total(nom_repertoire)[indice_fichier]  # Utilisation de la fonction TF
+            valeur_tf_fichier = calcul_tf_total(noms_fichiers, nom_repertoire)[indice_fichier]  # Utilisation de la fonction TF
 
             for mot in liste_mots:
                 if mot in contenu_fichier_split:
@@ -205,12 +193,10 @@ def creation_matrice(nom_repertoire):
 
         matrice.append(tf_idf_mot)
 
-    return noms_fichiers, liste_mots, transposee_matrice(matrice)
+    return liste_mots, transposee_matrice(matrice)
 
 
-def tf_idf_nul(return_matrice):  # Fonction renvoyant les mots avec un score TF-IDF nul
-    noms_fichiers, liste_mots, matrice = return_matrice
-
+def tf_idf_nul(liste_mots, noms_fichiers, matrice):  # Fonction renvoyant les mots avec un score TF-IDF nul
     moyenne_tf_idf_mots = []
 
     for indice_mot in range(len(liste_mots)):
@@ -229,9 +215,7 @@ def tf_idf_nul(return_matrice):  # Fonction renvoyant les mots avec un score TF-
     return liste_valeurs_min
 
 
-def tf_idf_max(return_matrice):  # Fonction renvoyant les mots avec le score TF-IDF le plus élevé.
-    noms_fichiers, liste_mots, matrice = return_matrice
-
+def tf_idf_max(liste_mots, noms_fichiers, matrice):  # Fonction renvoyant les mots avec le score TF-IDF le plus élevé.
     moyenne_tf_idf_mots = []
 
     for indice_mot in range(len(liste_mots)):
@@ -254,10 +238,8 @@ def tf_idf_max(return_matrice):  # Fonction renvoyant les mots avec le score TF-
 
 
 # Fonction renvoyant le mot le plus utilisé par un président
-def mot_max_president(nom_repertoire, return_matrice, nom_president):
-    noms_fichiers = liste_fichiers(nom_repertoire, "txt")
-
-    liste_mots_non_important = tf_idf_nul(return_matrice)
+def mot_max_president(liste_mots, noms_fichiers, matrice, nom_president, nom_repertoire):
+    liste_mots_non_important = tf_idf_nul(liste_mots, noms_fichiers, matrice)
 
     contenu_fichiers = ""
 
@@ -281,9 +263,7 @@ def mot_max_president(nom_repertoire, return_matrice, nom_president):
 
 
 # Fonction renvoyant le président ayant énonce le mot recherche le plus de fois
-def mot_enonce_president(nom_repertoire, mot_recherche):
-    noms_fichiers = liste_fichiers(nom_repertoire, "txt")
-
+def mot_enonce_president(noms_fichiers, nom_repertoire, mot_recherche):
     dict_pres_mot = {}
 
     for nom_fichier in noms_fichiers:
@@ -313,9 +293,7 @@ def mot_enonce_president(nom_repertoire, mot_recherche):
 
 
 # Fonction permettrant de trouver le premier président à avoir parler d'un mot ou d'un sujet
-def premier_president_mot(nom_repertoire, mot_recherche):
-    noms_fichiers = liste_fichiers(nom_repertoire, "txt")
-
+def premier_president_mot(noms_fichiers, nom_repertoire, mot_recherche):
     dict_pres_mot = {}
 
     for nom_fichier in noms_fichiers:
@@ -344,15 +322,13 @@ def premier_president_mot(nom_repertoire, mot_recherche):
 
 
 # Fonction permettant de renvoyer les mots que tout les président on évoqué au moins une fois.
-def mots_tous_presidents(return_matrice, nom_repertoire_nettoye):
-    noms_fichiers, liste_mots, matrice = return_matrice
-
-    liste_mots_non_important = tf_idf_nul(return_matrice)
+def mots_tous_presidents(liste_mots, noms_fichiers, matrice, nom_repertoire):
+    liste_mots_non_important = tf_idf_nul(liste_mots, noms_fichiers, matrice)
 
     liste_contenu_fichier_split = []
 
     for nom_fichier in noms_fichiers:
-        with open(nom_repertoire_nettoye + "/" + nom_fichier, "r", encoding="utf-8") as fichier:
+        with open(nom_repertoire + "/" + nom_fichier, "r", encoding="utf-8") as fichier:
             liste_contenu_fichier_split.append(fichier.read().split())
 
     liste_mots_tous_president = []
@@ -362,10 +338,9 @@ def mots_tous_presidents(return_matrice, nom_repertoire_nettoye):
                            for indice_fichier in range(len(noms_fichiers))]
 
         dict_pres = {}
-        for nom_president in recup_noms_presidents(nom_repertoire_nettoye):
+        for nom_president in recup_noms_presidents(noms_fichiers):
             dict_pres[nom_president] = [[nom_fichier for nom_fichier in noms_fichiers if nom_president in nom_fichier],
-                                        False
-                                        ]
+                                        False]
             for indice_fichier in range(len(noms_fichiers)):
                 if nom_president in noms_fichiers[indice_fichier] and mot_in_fichiers[indice_fichier]:
                     dict_pres[nom_president][1] = True
@@ -387,9 +362,7 @@ def formater_question(question):
     return chaine_formatee.split()
 
 
-def mot_dans_corpus(nom_repertoire, question):
-    noms_fichiers = liste_fichiers(nom_repertoire, "txt")
-
+def mot_dans_corpus(noms_fichiers, nom_repertoire, question):
     contenus_fichiers = ""
     for nom_fichier in noms_fichiers:
         with open(nom_repertoire + "/" + nom_fichier, "r") as fichier:
@@ -408,14 +381,14 @@ def mot_dans_corpus(nom_repertoire, question):
     return mot_corpus
 
 
-def tf_question(nom_repertoire, question, liste_mots_corpus):
+def tf_question(question, noms_fichiers, nom_repertoire, liste_mots_corpus):
     question_formatee = formater_question(question)
 
     question_chaine = ""
     for mot in question_formatee:
         question_chaine += mot + " "
 
-    mot_corpus = mot_dans_corpus(nom_repertoire, question_formatee)
+    mot_corpus = mot_dans_corpus(noms_fichiers, nom_repertoire, question)
 
     dictionnaire = calcul_tf(question_chaine)
 
@@ -428,14 +401,12 @@ def tf_question(nom_repertoire, question, liste_mots_corpus):
     return dictionnaire
 
 
-def tf_idf_question(nom_repertoire, question):
-    noms_fichiers = liste_fichiers(nom_repertoire, "txt")
-
+def tf_idf_question(question, nom_repertoire, noms_fichiers):
     question_formatee = formater_question(question)
 
-    idf_corpus = calcul_idf_total(nom_repertoire)
+    idf_corpus = calcul_idf_total(noms_fichiers, nom_repertoire)
 
-    mot_corpus = mot_dans_corpus(nom_repertoire, question)
+    mot_corpus = mot_dans_corpus(noms_fichiers, nom_repertoire, question)
 
     matrice = []
 
@@ -446,7 +417,7 @@ def tf_idf_question(nom_repertoire, question):
                 mots.append(idf_corpus[mot])
         matrice.append(mots)
 
-    return mot_corpus, noms_fichiers, matrice
+    return mot_corpus, matrice
 
 
 def produit_scalaire(vecteur_a, vecteur_b):
@@ -483,4 +454,4 @@ def doc_pertinent(return_matrice_corpus, return_matrice_question):
 
 
 
-print(tf_idf_question("cleaned", "Bonjour comment allez vous, climat histoire"))
+#print(tf_idf_question("cleaned", "Bonjour comment allez vous, climat histoire"))
