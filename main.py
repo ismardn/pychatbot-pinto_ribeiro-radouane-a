@@ -2,6 +2,7 @@ import os
 import fonctions_matrice as fct_mat
 
 
+# Fonction permettant d'accéder au ChatBot
 def acceder_chatbot():
     pass
 
@@ -23,14 +24,17 @@ def fonctionnalite_2(noms_presidents):
 # Afficher l'ensemble des prénoms des présidents et/ou les modifier
 def fonctionnalite_3(nom_fichier_presidents, noms_presidents):
     if not os.path.isfile(nom_fichier_presidents):  # Si le fichier "presidents.txt" n'existe pas, le créer
-        open(nom_fichier_presidents, "x")
+        # Le paramètre "x" permet de créer le fichier s'il n'existe pas
+        open(nom_fichier_presidents, "x", encoding="utf-8")
 
     with open(nom_fichier_presidents, "r", encoding="utf-8") as fichier:
         contenu_fichier = fichier.read()
+
     tous_prenoms = True
     for nom_president in noms_presidents:
         if nom_president not in contenu_fichier:
-            # Si un président n'est pas dans le fichier "presidents.txt", alors le contenu du fichier doit être modifié
+            # Si un le nom d'un président récupéré dans les noms des fichiers n'est pas dans le fichier "presidents.txt"
+            # Alors le contenu du fichier doit être modifié donc variable "tous_prenoms" passée à False
             tous_prenoms = False
 
     def modif_prenoms():  # Fonction interne qui permet d'associer des prénoms aux noms des présidents
@@ -52,11 +56,12 @@ def fonctionnalite_3(nom_fichier_presidents, noms_presidents):
         with open(nom_fichier_presidents, "r", encoding="utf-8") as fichier:
             for ligne in fichier:
                 ligne_split = ligne.split(":")  # On récupère les noms/prénoms sous forme de listes
-                print("- " + ligne_split[0] + " : " + ligne_split[1], end="")
-        print()
-        input_utilisateur = input("Souhaitez vous modifier les prénoms associés aux noms des présidents ?\n"
+                # Afin de les afficher sous la forme - Nom : Prénom
+                print("- " + ligne_split[0] + " : " + ligne_split[1], end="")  # end="" car ligne_split[1] contient "\n"
+
+        input_utilisateur = input("\nSouhaitez vous modifier les prénoms associés aux noms des présidents ?\n"
                                   "Entrez \"o\" pour modifier les prénoms : ")
-        if input_utilisateur == "o":  # On propose à l'utilisateur de modifier les prénoms
+        if input_utilisateur == "o":  # On propose à l'utilisateur de modifier les prénoms s'il le souhaite
             modif_prenoms()
 
 
@@ -90,6 +95,7 @@ def fonctionnalite_6(noms_presidents, liste_mots_corpus, noms_fichiers, matrice,
         else:
             print("\nErreur : Veuillez entrer un nom de président présent dans le corpus de documents (",
                   end="")
+            # On indique à l'utilisateur les noms qu'il a le droit d'entrer
             for indice_nom in range(len(noms_presidents) - 1):
                 print(noms_presidents[indice_nom], end=", ")
             print(noms_presidents[-1] + ")\n")
@@ -99,7 +105,7 @@ def fonctionnalite_7(noms_fichiers, nom_repertoire):  # Fonctionnalité n°7
     mot_recherche = input("Entrez le mot recherché : ")
     return_mot_enonce_president = fct_mat.mot_enonce_president(noms_fichiers, nom_repertoire, mot_recherche)
 
-    if not return_mot_enonce_president[0]:
+    if not return_mot_enonce_president[0]:  # Si la liste contenant les présidents qui ont énoncé le mot est vide :
         print('\nAucun président n\'a énoncé le mot "' + mot_recherche + '".')
     else:
         print('\nLes présidents qui ont énoncé le mot "' + mot_recherche + '" sont :')
@@ -129,6 +135,7 @@ def fonctionnalite_10(noms_fichiers, liste_mots_corpus, matrice):
     # Fonction interne permettant de retourner le mot le plus long d'une liste de mots
     def taille_mot_plus_long(mots):
         taille_max = 0
+
         for mot in mots:
             longueur_mot = len(mot)
             if longueur_mot > taille_max:
@@ -136,10 +143,10 @@ def fonctionnalite_10(noms_fichiers, liste_mots_corpus, matrice):
 
         return taille_max
 
-    # Fonction interne permettant de compléter une chaine avec des espaces en fonction d'une taille max
+    # Fonction interne permettant de compléter une chaîne de caractères avec des espaces en fonction d'une taille max
     def ajuster_espaces(chaine, taille_max):
         taille_restante = taille_max + 1 - len(chaine)
-        return chaine + taille_restante * " "
+        return chaine + taille_restante * " "  # Complétion de la chaîne avec des espaces en fonction de taille_restante
 
     # Récupération des termes les plus long pour adapter le tableau
     noms_fichiers_plus_long = taille_mot_plus_long(noms_fichiers)
@@ -179,11 +186,10 @@ def fonctionnalite_10(noms_fichiers, liste_mots_corpus, matrice):
 
 # --------------------------------------------- Fonction principale --------------------------------------------- #
 def main():
-    # Initialisations des constantes
+    # Initialisations des constantes : noms de répertoires qui peuvent potentiellement changer et noms de fichiers
     NOM_REPERTOIRE_DISCOURS = "speeches"
     NOM_REPERTOIRE_NETTOYE = "cleaned"
-
-    NOM_FICHIER_PRESIDENTS = "presidents.txt"  # Noms et prénoms stockés dans ce fichier
+    NOM_FICHIER_PRESIDENTS = "presidents.txt"  # Les prénoms à partir des noms seront stockés dans ce fichier
 
     noms_fichiers = fct_mat.liste_fichiers(NOM_REPERTOIRE_DISCOURS, "txt")
 
@@ -192,8 +198,12 @@ def main():
     # Nettoyage des fichiers (suppression des caractères spéciaux, etc.)
     fct_mat.nettoyage_complet_fichiers(NOM_REPERTOIRE_NETTOYE, noms_fichiers, NOM_REPERTOIRE_DISCOURS)
 
+    # On récupère l'IDF de tous les mots ici puisqu'il est commun à tous les fichiers
+    idf_total = fct_mat.calcul_idf_total(noms_fichiers, NOM_REPERTOIRE_NETTOYE)
+
     # On récupère le tuple retourné par la fct "creation_matrice_corpus" (Liste des fichiers, liste des mots, matrice)
-    liste_mots_corpus, matrice_corpus = fct_mat.creation_matrice_corpus(noms_fichiers, NOM_REPERTOIRE_NETTOYE)
+    liste_mots_corpus, matrice_corpus = fct_mat.creation_matrice_corpus(noms_fichiers, NOM_REPERTOIRE_NETTOYE,
+                                                                        idf_total)
 
     print("\nBienvenue sur le ChatBot de Clément PINTO RIBEIRO et de Ismaël RADOUANE.\n")
 
@@ -205,7 +215,7 @@ def main():
               "ou entrer \"2\" pour accéder aux différentes fonctionnalités du programme.\n")
 
         reponse_utilisateur = input("Entrez le numéro choisi : ")
-        # Tant que l'utilisateur ne répond pas '1' ou '2'
+        # Tant que l'utilisateur ne répond pas '1' ou '2', ou 'q'
         while reponse_utilisateur not in ["1", "2", "q"]:
             print("\nErreur : Veuillez entrer les nombres \"1\" ou \"2\", ou \"q\" pour quitter.\n")
             reponse_utilisateur = input("Entrez le numéro choisi : ")
@@ -214,7 +224,6 @@ def main():
             acceder_chatbot()
 
         elif reponse_utilisateur == "2":
-
             demander_deuxieme_numero = True
 
             while demander_deuxieme_numero:
@@ -273,13 +282,13 @@ def main():
                     fonctionnalite_10(noms_fichiers, liste_mots_corpus, matrice_corpus)
 
                 elif reponse_utilisateur == "q":
-                    demander_deuxieme_numero = False  # La boucle "while" s'arrête donc le programme également
+                    demander_deuxieme_numero = False  # La deuxième boucle "while" s'arrête
 
                 print()
 
-                if demander_deuxieme_numero:
+                if demander_deuxieme_numero:  # Si l'utilisateur n'a pas entré "q"
                     continuer = input("\nEntrez \"o\" pour accéder à une autre fonctionnalité : ")
-                    if continuer != "o":
+                    if continuer != "o":  # Si l'utilisateur n'entre pas "o"
                         demander_deuxieme_numero = False
 
         elif reponse_utilisateur == "q":
@@ -291,5 +300,5 @@ def main():
                 demander_premier_numero = False
 
 
-if __name__ == "__main__":  # Exécution du programme principal (fonction "main")
+if __name__ == "__main__":  # Exécution du programme principal (fonction "main()")
     main()

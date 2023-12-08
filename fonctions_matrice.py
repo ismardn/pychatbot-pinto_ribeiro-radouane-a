@@ -13,6 +13,7 @@ def liste_fichiers(repertoire, extension):
     return noms_fichiers
 
 
+# Fonction pour récupérer les noms des présidents
 def retirer_caracteres_nom_fichier(nom_fichier):
     # Slice de la chaîne "nom_fichier" pour enlever les premiers caractères ("Nomination_") et l'extension
     nom_president_temp = nom_fichier[len("Nomination_"):len(nom_fichier) - len(".txt")]
@@ -24,11 +25,11 @@ def retirer_caracteres_nom_fichier(nom_fichier):
     return nom_president
 
 
-# Fonction pour remettre au propre la liste du nom des présidents en retirant les numéruos et les doublons
+# Fonction pour remettre au propre la liste du nom des présidents en retirant les numéros et les doublons
 def recup_noms_presidents(noms_fichiers):
     noms_presidents_temp = []
     for nom_fichier in noms_fichiers:
-        # On applique la fonction suppressions caractères sur chaque nom de fichier
+        # On applique la fonction retirer_caracteres_nom_fichier() sur chaque nom de fichier
         nom_president = retirer_caracteres_nom_fichier(nom_fichier)
         noms_presidents_temp.append(nom_president)
 
@@ -46,8 +47,8 @@ def en_minuscule(chaine):
     nouvelle_chaine = ""
 
     for caractere in chaine:
-        if ord("A") <= ord(caractere) <= ord('Z'):  # Si le code ASCII du caractère appartient aux majuscules
-            nouvelle_chaine += chr(ord(caractere) + ord("a") - ord("A"))  # On le transforme en minuscule
+        if ord("A") <= ord(caractere) <= ord('Z'):  # Si le code ASCII du caractère appartient à ceux des majuscules
+            nouvelle_chaine += chr(ord(caractere) + ord("a") - ord("A"))  # On transforme le caractère en minuscule
         else:
             nouvelle_chaine += caractere
 
@@ -57,7 +58,8 @@ def en_minuscule(chaine):
 # Application de la fonction précédente à tout les fichiers
 def creer_fichiers_minuscule(noms_fichiers, nom_repertoire_discours, nom_repertoire_nettoye):
     for nom_fichier in noms_fichiers:
-        # On ouvre tous les fichiers du programme avec l'encodage utf-8 pour bien conserver les accents, notamment ici
+        # On ouvre tous les fichiers du programme avec l'encodage utf-8 pour bien conserver les accents, notamment ici,
+        # mais également dans l'entièreté du code
         with open(nom_repertoire_discours + "/" + nom_fichier, "r", encoding="utf-8") as fichier_ancien, \
                 open(nom_repertoire_nettoye + "/" + nom_fichier, "w", encoding="utf-8") as fichier_nettoye:
             # Application de la fonction minuscule sur chaque fichier du dossier des discours
@@ -66,23 +68,24 @@ def creer_fichiers_minuscule(noms_fichiers, nom_repertoire_discours, nom_reperto
 
 # Remise en forme des textes en enlevant les caractères spéciaux ainsi que les numéros.
 def suppression_caracteres_speciaux(chaine, caracteres=None):
-    if caracteres is None:
+    if caracteres is None:  # Si le paramètre "caracteres" n'est pas spécifié
         caracteres_speciaux = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-                               ',', '-', "'", '.', '!', '?', '_', ':', '\n', '"', ';', '`']  # Caractères supprimés
+                               ',', '-', "'", '.', '!', '?', '_', ':', '\n', '"', ';', '`']  # Caractères à supprimer
     else:
         caracteres_speciaux = caracteres
 
     nouvelle_chaine = ""
 
     for caractere in chaine:
-        if caractere in caracteres_speciaux:  # Remplacement des caractères spéciaux par des espaces
-            nouvelle_chaine += " "
+        if caractere in caracteres_speciaux:
+            nouvelle_chaine += " "  # Remplacement des caractères spéciaux par des espaces
         else:
             nouvelle_chaine += caractere
 
     return nouvelle_chaine
 
 
+# Nettoyer l'entièreté des fichiers contenus dans le répertoire des discours
 def nettoyage_complet_fichiers(nom_repertoire_nettoye, noms_fichiers, nom_repertoire_discours):
     if not os.path.exists(nom_repertoire_nettoye):  # Création du répertoire pour fichiers nettoyés s'il n'existe pas
         os.mkdir(nom_repertoire_nettoye)
@@ -95,11 +98,11 @@ def nettoyage_complet_fichiers(nom_repertoire_nettoye, noms_fichiers, nom_repert
             ancien_contenu = fichier.read()  # On stocke dans un variable l'ensemble du contenu du fichier
 
         with open(nom_repertoire_nettoye + "/" + nom_fichier, "w", encoding="utf-8") as fichier:
-            # Application de la fonction supprimant les caractères spéciaux sur chaque fichier du dossier des discours
+            # Application de la fonction supprimant les caractères spéciaux sur chaque fichier du dossier nettoyé
             fichier.write(suppression_caracteres_speciaux(ancien_contenu))
 
 
-def calcul_tf(chaine):  # Fonction pour calculer le TF
+def calcul_tf(chaine):  # Fonction pour calculer le TF d'une chaîne
     liste_mots = chaine.split()
     dict_tf = {}
 
@@ -107,12 +110,13 @@ def calcul_tf(chaine):  # Fonction pour calculer le TF
         if mot not in dict_tf:
             dict_tf[mot] = 1  # Création d'une nouvelle clé si le mot n'existe pas
         else:
-            dict_tf[mot] += 1  # Incrémentation de sa valeur sinon
+            dict_tf[mot] += 1  # Incrémentation de sa valeur, sinon
 
     return dict_tf
 
 
 def calcul_tf_total(noms_fichiers, nom_repertoire):  # Application de la fonction "calcul_tf" à tout les fichiers
+    # Les valeurs TF sont stockées sous la forme de N dictionnaires avec N = nombre de fichiers
     liste_tf = []
 
     for nom_fichier in noms_fichiers:
@@ -151,13 +155,14 @@ def calcul_idf_total(noms_fichiers, nom_repertoire):  # Fonction permettant de c
 
         dict_idf[mot] = math.log10(len(noms_fichiers) / nombre_fichiers_mot)  # Calcul de l'IDF
 
-    return dict_idf
+    return dict_idf  # IDF est le même pour tous les fichiers; donc retour d'un unique dictionnaire
 
 
 # Fonction pour réaliser la transposée d'une matrice qui consiste à inverse les lignes et les colonnes de celle ci
 def transposee_matrice(matrice):
     nouvelle_matrice = []
 
+    # On parcours la matrice initiale avec les colonnes en fonction des lignes et non l'inverse pour inverse la matrice
     for indice_colonne in range(len(matrice[0])):
 
         ligne_nouvelle_matrice = []
@@ -172,10 +177,10 @@ def transposee_matrice(matrice):
 
 
 # Création de notre matrcice associant un score TF-IDF pour chaque noms de fichiers en fonctions des mots
-def creation_matrice_corpus(noms_fichiers, nom_repertoire):
-    valeur_idf_fichier = calcul_idf_total(noms_fichiers, nom_repertoire)
+def creation_matrice_corpus(noms_fichiers, nom_repertoire, idf_total):
+    valeurs_tf_fichier = calcul_tf_total(noms_fichiers, nom_repertoire)
 
-    liste_mots = [mot for mot in valeur_idf_fichier]
+    liste_mots = [mot for mot in idf_total]  # On récupère tous les mots du corpus
 
     matrice = []
 
@@ -186,11 +191,11 @@ def creation_matrice_corpus(noms_fichiers, nom_repertoire):
         with open(nom_repertoire + "/" + noms_fichiers[indice_fichier], "r", encoding="utf-8") as fichier:
             contenu_fichier_split = fichier.read().split()
 
-            valeur_tf_fichier = calcul_tf_total(noms_fichiers, nom_repertoire)[indice_fichier]
+            valeur_tf_fichier = valeurs_tf_fichier[indice_fichier]
 
             for mot in liste_mots:
                 if mot in contenu_fichier_split:
-                    tf_idf_mot.append(valeur_idf_fichier[mot] * valeur_tf_fichier[mot])
+                    tf_idf_mot.append(idf_total[mot] * valeur_tf_fichier[mot])
                 else:
                     tf_idf_mot.append(0.)
 
@@ -403,14 +408,12 @@ def tf_question(noms_fichiers, nom_repertoire, question, liste_mots_corpus):
     return dict_tf
 
 
-def tf_idf_question(noms_fichiers, nom_repertoire, question, liste_mots_corpus):
-    idf_corpus = calcul_idf_total(noms_fichiers, nom_repertoire)
-
+def tf_idf_question(noms_fichiers, nom_repertoire, question, liste_mots_corpus, idf_total):
     tf_total = tf_question(noms_fichiers, nom_repertoire, question, liste_mots_corpus)
 
     vecteur = []
     for mot in liste_mots_corpus:
-        vecteur.append(idf_corpus[mot] * tf_total[mot])
+        vecteur.append(idf_total[mot] * tf_total[mot])
 
     return vecteur
 
@@ -457,9 +460,9 @@ def tf_idf_question_max(vecteur_question, liste_mots_corpus):
     return liste_mots_corpus[valeurs_max[1]]
 
 
-def generation_reponse(noms_fichiers, nom_repertoire_nettoye, question, liste_mots_corpus, matrice_corpus,
+def generation_reponse(noms_fichiers, nom_repertoire_nettoye, question, liste_mots_corpus, idf_total, matrice_corpus,
                        nom_repertoire_discours):
-    vecteur_question = tf_idf_question(noms_fichiers, nom_repertoire_nettoye, question, liste_mots_corpus)
+    vecteur_question = tf_idf_question(noms_fichiers, nom_repertoire_nettoye, question, liste_mots_corpus, idf_total)
 
     document_question = doc_pertinent(noms_fichiers, vecteur_question, matrice_corpus)
 
@@ -497,18 +500,19 @@ def affiner_reponse():
 
 
 
-
-
-liste_mots_test, matrice_corpus_test = creation_matrice_corpus(liste_fichiers("cleaned", "txt"), "cleaned")
+fichiers = liste_fichiers("cleaned", "txt")
+idf_tot = calcul_idf_total(fichiers, "cleaned")
+liste_mots_test, matrice_corpus_test = creation_matrice_corpus(fichiers, "cleaned",
+                                                               idf_tot)
 
 phrase_test = "A quoi doit-on penser quand on pense à la france ?"
 
-test_question = tf_idf_question(liste_fichiers("cleaned", "txt"),
+test_question = tf_idf_question(fichiers,
                   "cleaned",
                   phrase_test,
-                  liste_mots_test)
+                  liste_mots_test, idf_tot)
 
-print(doc_pertinent(liste_fichiers("cleaned", "txt"), test_question, matrice_corpus_test))
-print(generation_reponse(liste_fichiers("cleaned", "txt"), "cleaned", phrase_test, liste_mots_test, matrice_corpus_test,
+print(doc_pertinent(fichiers, test_question, matrice_corpus_test))
+print(generation_reponse(fichiers, "cleaned", phrase_test, liste_mots_test, idf_tot, matrice_corpus_test,
                        "speeches"))
 
