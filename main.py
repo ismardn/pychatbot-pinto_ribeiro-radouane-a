@@ -133,10 +133,10 @@ def fonctionnalite_9(liste_mots_corpus, noms_fichiers, matrice, nom_repertoire):
 def fonctionnalite_10(noms_fichiers, liste_mots_corpus, matrice):
 
     # Fonction interne permettant de retourner le mot le plus long d'une liste de mots
-    def taille_mot_plus_long(mots):
+    def taille_mot_plus_long(liste_mots):
         taille_max = 0
 
-        for mot in mots:
+        for mot in liste_mots:
             longueur_mot = len(mot)
             if longueur_mot > taille_max:
                 taille_max = longueur_mot
@@ -156,30 +156,29 @@ def fonctionnalite_10(noms_fichiers, liste_mots_corpus, matrice):
     print((mot_plus_long + len("|  |")) * " ", end="")
     for _ in range(len(noms_fichiers) - 1):
         # Puis x * "_" en fonctione des bordures, espaces et tailles des noms de fichiers
-        print((noms_fichiers_plus_long + len("  | ")) * "_", end="")
-    print((noms_fichiers_plus_long + len("  |")) * "_")
+        print((noms_fichiers_plus_long + len(" | ")) * "_", end="")
+    print((noms_fichiers_plus_long + len("  ")) * "_")
 
     # Deuxième ligne; premier espace correspondant à la taille du plus grand mot
     print((mot_plus_long + len("|  ")) * " ", end="")
     for nom_fichier in noms_fichiers:  # Affichage des noms des fichiers avec bordures
-        print("|  " + ajuster_espaces(nom_fichier, noms_fichiers_plus_long), end="")
+        print("| " + ajuster_espaces(nom_fichier, noms_fichiers_plus_long), end="")
     print("|")
 
     def fermer_tableau():  # Fonction interne permettant de fermer le tableau à chaque nouvelle ligne
         print((mot_plus_long + len("  ")) * "_", end="")
         for _ in range(len(noms_fichiers)):
-            print("|___" + noms_fichiers_plus_long * "_", end="")
+            print("|__" + noms_fichiers_plus_long * "_", end="")
         print("|")
 
-    print("_", end="")
+    print(" ", end="")
     fermer_tableau()
 
     # On étend le tableau en affichant tous les mots puis en le fermant grâce à la fonction "fermer_tableau"
     for indice_mot in range(len(liste_mots_corpus)):
         print("| " + ajuster_espaces(liste_mots_corpus[indice_mot], mot_plus_long), end="")
         for indice_fichier in range(len(noms_fichiers)):
-            print("| " + ajuster_espaces(str(matrice[indice_mot][indice_fichier]), noms_fichiers_plus_long) +
-                  " ", end="")
+            print("| " + ajuster_espaces(str(matrice[indice_mot][indice_fichier]), noms_fichiers_plus_long), end="")
         print("|\n|", end="")
         fermer_tableau()
 

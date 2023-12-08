@@ -104,9 +104,10 @@ def nettoyage_complet_fichiers(nom_repertoire_nettoye, noms_fichiers, nom_repert
 
 def calcul_tf(chaine):  # Fonction pour calculer le TF d'une chaîne
     liste_mots = chaine.split()
+
     dict_tf = {}
 
-    for mot in liste_mots:  # Mise en place d'un dictionnaire associant à chaque mot son score
+    for mot in liste_mots:  # Mise en place d'un dictionnaire associant à chaque mot sa valeur TF
         if mot not in dict_tf:
             dict_tf[mot] = 1  # Création d'une nouvelle clé si le mot n'existe pas
         else:
@@ -176,7 +177,7 @@ def transposee_matrice(matrice):
     return nouvelle_matrice
 
 
-# Création de notre matrcice associant un score TF-IDF pour chaque noms de fichiers en fonctions des mots
+# Création de notre matrcice associant un score TF-IDF pour chaque mots en fonction des fichiers
 def creation_matrice_corpus(noms_fichiers, nom_repertoire, idf_total):
     valeurs_tf_fichier = calcul_tf_total(noms_fichiers, nom_repertoire)
 
@@ -184,6 +185,7 @@ def creation_matrice_corpus(noms_fichiers, nom_repertoire, idf_total):
 
     matrice = []
 
+    # On réalise premièrement la matrice pour chaque fichiers en fonction des mots pour une meilleure optimisation
     for indice_fichier in range(len(noms_fichiers)):
 
         tf_idf_mot = []
@@ -195,18 +197,21 @@ def creation_matrice_corpus(noms_fichiers, nom_repertoire, idf_total):
 
             for mot in liste_mots:
                 if mot in contenu_fichier_split:
-                    tf_idf_mot.append(idf_total[mot] * valeur_tf_fichier[mot])
+                    tf_idf_mot.append(idf_total[mot] * valeur_tf_fichier[mot])  # Calcul du produit TF-IDF
                 else:
-                    tf_idf_mot.append(0.)
+                    # Si le mot n'est pas dans le fichier, alors son TF est nul donc le produit le sera aussi
+                    tf_idf_mot.append(0)
 
         matrice.append(tf_idf_mot)
 
+    # On retourne la liste des mots du corpus (afin qu'on puisse la réutiliser), ainsi que la transposée de la matrice
     return liste_mots, transposee_matrice(matrice)
 
 
 def tf_idf_nul(liste_mots, noms_fichiers, matrice):  # Fonction renvoyant les mots avec un score TF-IDF nul
     moyenne_tf_idf_mots = []
 
+    # Calcul de la moyenne des TF-IDF pour chaque mot en fonction des différents fichiers
     for indice_mot in range(len(liste_mots)):
         somme_tf_idf = 0
         for indice_fichier in range(len(noms_fichiers)):
@@ -216,8 +221,9 @@ def tf_idf_nul(liste_mots, noms_fichiers, matrice):  # Fonction renvoyant les mo
     liste_valeurs_min = []
 
     for indice_valeur_min in range(len(moyenne_tf_idf_mots)):
-        # Si la moyenne du score TF-IDF d'un mot entre tous les fichiers est nulle, alors on l'ajoute à la liste
-        if moyenne_tf_idf_mots[indice_valeur_min] == 0.:
+        # Si la moyenne du score TF-IDF d'un mot entre tous les fichiers est nulle, alors on l'ajoute à la liste,
+        # puisque ce seront forcément les mots avec le TF-IDF le plus bas
+        if moyenne_tf_idf_mots[indice_valeur_min] == 0:
             liste_valeurs_min.append(liste_mots[indice_valeur_min])
 
     return liste_valeurs_min
@@ -226,23 +232,24 @@ def tf_idf_nul(liste_mots, noms_fichiers, matrice):  # Fonction renvoyant les mo
 def tf_idf_max(liste_mots, noms_fichiers, matrice):  # Fonction renvoyant les mots avec le score TF-IDF le plus élevé.
     moyenne_tf_idf_mots = []
 
+    # Calcul de la moyenne des TF-IDF (même principe que la fonction précédente)
     for indice_mot in range(len(liste_mots)):
         somme_tf_idf = 0
         for indice_fichier in range(len(noms_fichiers)):
             somme_tf_idf += matrice[indice_mot][indice_fichier]
         moyenne_tf_idf_mots.append(somme_tf_idf / len(noms_fichiers))
 
-    # Initialisation de la valeur max à -1, et [] correspond à l'ensemble des mots de même TF-IDF max
-    liste_valeurs_max = [-1, []]
-
+    valeur_max = -1
     for valeur in moyenne_tf_idf_mots:
-        if valeur > liste_valeurs_max[0]:
-            liste_valeurs_max = [valeur, []]
-            for indice_valeur_max in range(len(moyenne_tf_idf_mots)):
-                if moyenne_tf_idf_mots[indice_valeur_max] == valeur:
-                    liste_valeurs_max[1].append(liste_mots[indice_valeur_max])
+        if valeur > valeur_max:
+            valeur_max = valeur
 
-    return liste_valeurs_max[1]
+    liste_mot_max = []
+    for indice_valeur in range(len(moyenne_tf_idf_mots)):
+        if moyenne_tf_idf_mots[indice_valeur] == valeur_max:
+            liste_mot_max.append(liste_mots[indice_valeur])
+
+    return liste_mot_max
 
 
 # Fonction renvoyant le mot le plus utilisé par un président
@@ -256,18 +263,21 @@ def mot_max_president(liste_mots, noms_fichiers, matrice, nom_president, nom_rep
             with open(nom_repertoire + "/" + nom_fichier, "r", encoding="utf-8") as fichier:
                 contenu_fichiers = fichier.read() + " "
 
-    liste_valeurs_max = [-1, []]
-
     tf_contenu_fichiers = calcul_tf(contenu_fichiers)
 
-    for mot in tf_contenu_fichiers:  # Reprise de la même base de code que pour la fonction TF-IDF max.
-        if tf_contenu_fichiers[mot] > liste_valeurs_max[0] and mot not in liste_mots_non_important:
-            liste_valeurs_max = [tf_contenu_fichiers[mot], []]
-            for mot_max in tf_contenu_fichiers:
-                if tf_contenu_fichiers[mot_max] == liste_valeurs_max[0]:
-                    liste_valeurs_max[1].append(mot_max)
+    valeur_max = -1
+    for mot in tf_contenu_fichiers:
+        valeur = tf_contenu_fichiers[mot]
+        if valeur > valeur_max and mot not in liste_mots_non_important:
+            valeur_max = valeur
 
-    return liste_valeurs_max[1]
+    liste_mot_max = []
+
+    for mot in tf_contenu_fichiers:
+        if tf_contenu_fichiers[mot] == valeur_max:
+            liste_mot_max.append(mot)
+
+    return liste_mot_max
 
 
 # Fonction renvoyant le président ayant énonce le mot recherche le plus de fois
@@ -433,31 +443,42 @@ def norme_vecteur(vecteur):
 
 
 def calcul_similarite(vecteur_a, vecteur_b):
-    return produit_scalaire(vecteur_a, vecteur_b) / (norme_vecteur(vecteur_a) * norme_vecteur(vecteur_b))
+    norme_vect_a = norme_vecteur(vecteur_a)
+    norme_vect_b = norme_vecteur(vecteur_b)
+
+    if norme_vect_a == 0 or norme_vect_b == 0:
+        return None
+
+    return produit_scalaire(vecteur_a, vecteur_b) / (norme_vect_a * norme_vect_b)
 
 
 def doc_pertinent(noms_fichiers, vecteur_question, matrice_corpus):
-    similarite_max = [0, None]
+    similarite_max = [None, -1]
 
     matrice_corpus_transposee = transposee_matrice(matrice_corpus)
 
     for indice_fichier in range(len(noms_fichiers)):
-        similarite = calcul_similarite(vecteur_question, matrice_corpus_transposee[indice_fichier])
-        if similarite > similarite_max[0]:
-            similarite_max = [similarite, noms_fichiers[indice_fichier]]
 
-    return similarite_max[1]
+        similarite = calcul_similarite(vecteur_question, matrice_corpus_transposee[indice_fichier])
+
+        if similarite is None:
+            return None
+
+        if similarite > similarite_max[1]:
+            similarite_max = [noms_fichiers[indice_fichier], similarite]
+
+    return similarite_max[0]
 
 
 def tf_idf_question_max(vecteur_question, liste_mots_corpus):
-    valeurs_max = [0, 0]
+    valeurs_max = [None, -1]
 
     for indice_valeur in range(len(vecteur_question)):
         valeur = vecteur_question[indice_valeur]
-        if valeur > valeurs_max[0]:
-            valeurs_max = [valeur, indice_valeur]
+        if valeur > valeurs_max[1]:
+            valeurs_max = [indice_valeur, valeur]
 
-    return liste_mots_corpus[valeurs_max[1]]
+    return liste_mots_corpus[valeurs_max[0]]
 
 
 def generation_reponse(noms_fichiers, nom_repertoire_nettoye, question, liste_mots_corpus, idf_total, matrice_corpus,
@@ -465,6 +486,9 @@ def generation_reponse(noms_fichiers, nom_repertoire_nettoye, question, liste_mo
     vecteur_question = tf_idf_question(noms_fichiers, nom_repertoire_nettoye, question, liste_mots_corpus, idf_total)
 
     document_question = doc_pertinent(noms_fichiers, vecteur_question, matrice_corpus)
+
+    if document_question is None:
+        return None
 
     mot_tf_idf_max = tf_idf_question_max(vecteur_question, liste_mots_corpus)
 
