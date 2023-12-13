@@ -3,10 +3,8 @@ import fonctions_matrice as fct_mat
 
 
 # Fonction permettant d'accéder au ChatBot
-def acceder_chatbot(noms_fichiers, nom_repertoire_nettoye, liste_mots_corpus, idf_total, matrice_corpus,
-                    nom_repertoire_discours):
-    print("\nQue voulez-vous me demander ?")
-    input_utilisateur = input("> ")
+def acceder_chatbot(noms_fichiers, nom_repertoire_nettoye, input_utilisateur, liste_mots_corpus, idf_total,
+                    matrice_corpus, nom_repertoire_discours):
     print("\n" + fct_mat.affiner_reponse(noms_fichiers, nom_repertoire_nettoye, input_utilisateur, liste_mots_corpus,
                                          idf_total, matrice_corpus, nom_repertoire_discours))
 
@@ -224,8 +222,16 @@ def main():
             reponse_utilisateur = input("Entrez le numéro choisi : ")
 
         if reponse_utilisateur == "1":
-            acceder_chatbot(noms_fichiers, NOM_REPERTOIRE_NETTOYE, liste_mots_corpus, idf_total, matrice_corpus,
-                            NOM_REPERTOIRE_DISCOURS)
+            continuer_demander = True
+            while continuer_demander:
+                print("\nQue voulez-vous me demander ? (Entrez \"q\" pour quitter)")
+                input_utilisateur = input("> ")
+
+                if input_utilisateur == "q":
+                    continuer_demander = False
+                else:
+                    acceder_chatbot(noms_fichiers, NOM_REPERTOIRE_NETTOYE, input_utilisateur, liste_mots_corpus,
+                                    idf_total, matrice_corpus, NOM_REPERTOIRE_DISCOURS)
 
         elif reponse_utilisateur == "2":
             demander_deuxieme_numero = True

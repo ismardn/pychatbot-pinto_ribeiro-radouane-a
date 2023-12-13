@@ -556,6 +556,3 @@ def affiner_reponse(noms_fichiers, nom_repertoire_nettoye, question, liste_mots_
             reponse += "."
 
     return reponse
-
-
-
