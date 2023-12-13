@@ -510,33 +510,50 @@ def generation_reponse(noms_fichiers, nom_repertoire_nettoye, question, liste_mo
     return phrase
 
 
-def affiner_reponse():
-    if phrase[0] == " ":
-        phrase = phrase[1:]
+def affiner_reponse(noms_fichiers, nom_repertoire_nettoye, question, liste_mots_corpus, idf_total, matrice_corpus,
+                    nom_repertoire_discours):
 
-    ascii_caractere = ord(phrase[0])
-    if ord("a") <= ascii_caractere <= ord('z'):
-        phrase = chr(ascii_caractere - (ord("a") - ord("A"))) + phrase[1:] + "."
+    debut_question = {
+        "comment": ("Après analyse, ", False),
+        "pourquoi": ("C'est parce que ", False),
+        "peux": ("Bien sûr ! ", True),
+        "sais": ("Bien sûr ! ", True),
+        "que": ("Selon moi, ", False)
+    }
 
+    reponse = generation_reponse(noms_fichiers, nom_repertoire_nettoye, question, liste_mots_corpus, idf_total,
+                                 matrice_corpus, nom_repertoire_discours)
 
+    if reponse is None:
+        reponse = "Je ne suis pas encore capable de répondre à votre message... Essayez de le reformuler !"
+    else:
+        if reponse[0] == " ":
+            reponse = reponse[1:]
+        if reponse[-1] == " ":
+            reponse = reponse[:-1]
 
+        question_formatee = formater_question(question)
 
+        if question_formatee[0] in debut_question:
+            for debut in debut_question:
+                reponse_debut = debut_question[debut]
+                if question_formatee[0] == debut:
+                    if not reponse_debut[1]:
+                        reponse = reponse_debut[0] + reponse
+                    else:
+                        ascii_caractere = ord(reponse[0])
+                        if ord("a") <= ascii_caractere <= ord('z'):
+                            reponse = reponse_debut[0] + chr(ascii_caractere - (ord("a") - ord("A"))) + reponse[1:]
+                        else:
+                            reponse = reponse_debut[0] + reponse
+        else:
+            ascii_caractere = ord(reponse[0])
+            if ord("a") <= ascii_caractere <= ord('z'):
+                reponse = chr(ascii_caractere - (ord("a") - ord("A"))) + reponse[1:]
 
+        ascii_caractere = ord(reponse[-1])
+        if not (ascii_caractere == ord("?") or ascii_caractere == ord("!")):
+            reponse += "."
 
-
-fichiers = liste_fichiers("cleaned", "txt")
-idf_tot = calcul_idf_total(fichiers, "cleaned")
-liste_mots_test, matrice_corpus_test = creation_matrice_corpus(fichiers, "cleaned",
-                                                               idf_tot)
-
-phrase_test = "A quoi doit-on penser quand on pense à la france ?"
-
-test_question = tf_idf_question(fichiers,
-                  "cleaned",
-                  phrase_test,
-                  liste_mots_test, idf_tot)
-
-print(doc_pertinent(fichiers, test_question, matrice_corpus_test))
-print(generation_reponse(fichiers, "cleaned", phrase_test, liste_mots_test, idf_tot, matrice_corpus_test,
-                       "speeches"))
+    return reponse
 
