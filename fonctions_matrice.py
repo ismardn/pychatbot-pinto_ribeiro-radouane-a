@@ -510,33 +510,4 @@ def generation_reponse(noms_fichiers, nom_repertoire_nettoye, question, liste_mo
     return phrase
 
 
-def affiner_reponse():
-    if phrase[0] == " ":
-        phrase = phrase[1:]
-
-    ascii_caractere = ord(phrase[0])
-    if ord("a") <= ascii_caractere <= ord('z'):
-        phrase = chr(ascii_caractere - (ord("a") - ord("A"))) + phrase[1:] + "."
-
-
-
-
-
-
-
-fichiers = liste_fichiers("cleaned", "txt")
-idf_tot = calcul_idf_total(fichiers, "cleaned")
-liste_mots_test, matrice_corpus_test = creation_matrice_corpus(fichiers, "cleaned",
-                                                               idf_tot)
-
-phrase_test = "A quoi doit-on penser quand on pense à la france ?"
-
-test_question = tf_idf_question(fichiers,
-                  "cleaned",
-                  phrase_test,
-                  liste_mots_test, idf_tot)
-
-print(doc_pertinent(fichiers, test_question, matrice_corpus_test))
-print(generation_reponse(fichiers, "cleaned", phrase_test, liste_mots_test, idf_tot, matrice_corpus_test,
-                       "speeches"))
 

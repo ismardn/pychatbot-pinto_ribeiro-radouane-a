@@ -3,8 +3,12 @@ import fonctions_matrice as fct_mat
 
 
 # Fonction permettant d'accéder au ChatBot
-def acceder_chatbot():
-    pass
+def acceder_chatbot(noms_fichiers, nom_repertoire_nettoye, liste_mots_corpus, idf_total, matrice_corpus,
+                    nom_repertoire_discours):
+    print("\nQue voulez-vous me demander ?")
+    input_utilisateur = input("> ")
+    print("\n" + fct_mat.affiner_reponse(noms_fichiers, nom_repertoire_nettoye, input_utilisateur, liste_mots_corpus,
+                                         idf_total, matrice_corpus, nom_repertoire_discours))
 
 
 # Fonction permettant d'afficher le contenu du fichier "README.txt"
@@ -220,7 +224,8 @@ def main():
             reponse_utilisateur = input("Entrez le numéro choisi : ")
 
         if reponse_utilisateur == "1":
-            acceder_chatbot()
+            acceder_chatbot(noms_fichiers, NOM_REPERTOIRE_NETTOYE, liste_mots_corpus, idf_total, matrice_corpus,
+                            NOM_REPERTOIRE_DISCOURS)
 
         elif reponse_utilisateur == "2":
             demander_deuxieme_numero = True
