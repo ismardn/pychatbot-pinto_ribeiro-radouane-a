@@ -159,53 +159,36 @@ def calcul_idf_total(noms_fichiers, nom_repertoire):  # Fonction permettant de c
     return dict_idf  # IDF est le même pour tous les fichiers; donc retour d'un unique dictionnaire
 
 
-# Fonction pour réaliser la transposée d'une matrice qui consiste à inverse les lignes et les colonnes de celle ci
-def transposee_matrice(matrice):
-    nouvelle_matrice = []
-
-    # On parcours la matrice initiale avec les colonnes en fonction des lignes et non l'inverse pour inverse la matrice
-    for indice_colonne in range(len(matrice[0])):
-
-        ligne_nouvelle_matrice = []
-
-        for indice_ligne in range(len(matrice)):
-            # Changement des lignes/colonnes réalisé ici
-            ligne_nouvelle_matrice.append(matrice[indice_ligne][indice_colonne])
-
-        nouvelle_matrice.append(ligne_nouvelle_matrice)
-
-    return nouvelle_matrice
-
-
 # Création de notre matrcice associant un score TF-IDF pour chaque mots en fonction des fichiers
 def creation_matrice_corpus(noms_fichiers, nom_repertoire, idf_total):
     valeurs_tf_fichier = calcul_tf_total(noms_fichiers, nom_repertoire)
 
     liste_mots = [mot for mot in idf_total]  # On récupère tous les mots du corpus
 
+    contenu_fichiers_liste = []
+
+    for nom_fichier in noms_fichiers:
+        with open(nom_repertoire + "/" + nom_fichier, "r", encoding="utf-8") as fichier:
+            contenu_fichiers_liste.append(fichier.read().split())
+
     matrice = []
 
-    # On réalise premièrement la matrice pour chaque fichiers en fonction des mots pour une meilleure optimisation
-    for indice_fichier in range(len(noms_fichiers)):
+    for mot in liste_mots:
 
-        tf_idf_mot = []
+        tfs_idf_mot = []
 
-        with open(nom_repertoire + "/" + noms_fichiers[indice_fichier], "r", encoding="utf-8") as fichier:
-            contenu_fichier_split = fichier.read().split()
-
+        for indice_fichier in range(len(noms_fichiers)):
             valeur_tf_fichier = valeurs_tf_fichier[indice_fichier]
 
-            for mot in liste_mots:
-                if mot in contenu_fichier_split:
-                    tf_idf_mot.append(idf_total[mot] * valeur_tf_fichier[mot])  # Calcul du produit TF-IDF
-                else:
-                    # Si le mot n'est pas dans le fichier, alors son TF est nul donc le produit le sera aussi
-                    tf_idf_mot.append(0)
+            if mot in contenu_fichiers_liste[indice_fichier]:
+                tfs_idf_mot.append(idf_total[mot] * valeur_tf_fichier[mot])  # Calcul du produit TF-IDF
+            else:
+                # Si le mot n'est pas dans le fichier, alors son TF est nul donc le produit le sera aussi
+                tfs_idf_mot.append(0)
 
-        matrice.append(tf_idf_mot)
+        matrice.append(tfs_idf_mot)
 
-    # On retourne la liste des mots du corpus (afin qu'on puisse la réutiliser), ainsi que la transposée de la matrice
-    return liste_mots, transposee_matrice(matrice)
+    return liste_mots, matrice
 
 
 def tf_idf_nul(liste_mots, noms_fichiers, matrice):  # Fonction renvoyant les mots avec un score TF-IDF nul
@@ -450,6 +433,24 @@ def calcul_similarite(vecteur_a, vecteur_b):
         return None
 
     return produit_scalaire(vecteur_a, vecteur_b) / (norme_vect_a * norme_vect_b)
+
+
+# Fonction pour réaliser la transposée d'une matrice qui consiste à inverse les lignes et les colonnes de celle ci
+def transposee_matrice(matrice):
+    nouvelle_matrice = []
+
+    # On parcours la matrice initiale avec les colonnes en fonction des lignes et non l'inverse pour inverse la matrice
+    for indice_colonne in range(len(matrice[0])):
+
+        ligne_nouvelle_matrice = []
+
+        for indice_ligne in range(len(matrice)):
+            # Changement des lignes/colonnes réalisé ici
+            ligne_nouvelle_matrice.append(matrice[indice_ligne][indice_colonne])
+
+        nouvelle_matrice.append(ligne_nouvelle_matrice)
+
+    return nouvelle_matrice
 
 
 def doc_pertinent(noms_fichiers, vecteur_question, matrice_corpus):
