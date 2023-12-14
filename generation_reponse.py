@@ -149,7 +149,7 @@ def generation_reponse(noms_fichiers, nom_repertoire_nettoye, question, liste_mo
     mot_tf_idf_max = tf_idf_question_max(vecteur_question, liste_mots_corpus)
 
     with open(nom_repertoire_discours + "/" + document_question, "r", encoding="utf-8") as fichier:
-        contenu_fichier = tt_fich.suppression_caracteres_speciaux(tt_fich.en_minuscule(fichier.read()), ["\n"])
+        contenu_fichier = tt_fich.suppression_caracteres_speciaux(fichier.read(), ["\n"])
 
     phrase_contenu_fichier = contenu_fichier.split(".")
 
@@ -159,7 +159,8 @@ def generation_reponse(noms_fichiers, nom_repertoire_nettoye, question, liste_mo
 
     while not trouve and indice_phrase < len(phrase_contenu_fichier):
         phrase = phrase_contenu_fichier[indice_phrase]
-        if mot_tf_idf_max in phrase:
+        phrase_minuscule = tt_fich.en_minuscule(phrase)
+        if mot_tf_idf_max in phrase_minuscule:
             trouve = True
         indice_phrase += 1
 
@@ -170,7 +171,7 @@ def affiner_reponse(noms_fichiers, nom_repertoire_nettoye, question, liste_mots_
                     nom_repertoire_discours):
 
     debut_question = {
-        "comment": ("Après analyse, ", False),
+        "comment": ("Après analyse, ", False),  # False = minuscule, True = majuscule
         "pourquoi": ("C'est parce que ", False),
         "peux": ("Bien sûr ! ", True),
         "sais": ("Bien sûr ! ", True),
@@ -183,9 +184,9 @@ def affiner_reponse(noms_fichiers, nom_repertoire_nettoye, question, liste_mots_
     if reponse is None:
         reponse = "Je ne suis pas encore capable de répondre à votre message... Essayez de le reformuler !"
     else:
-        if reponse[0] == " ":
+        while reponse[0] == " " or reponse[0] == "-":
             reponse = reponse[1:]
-        if reponse[-1] == " ":
+        while reponse[-1] == " ":
             reponse = reponse[:-1]
 
         question_formatee = formater_question(question)
@@ -194,12 +195,16 @@ def affiner_reponse(noms_fichiers, nom_repertoire_nettoye, question, liste_mots_
             for debut in debut_question:
                 reponse_debut = debut_question[debut]
                 if question_formatee[0] == debut:
-                    if not reponse_debut[1]:
-                        reponse = reponse_debut[0] + reponse
-                    else:
+                    if reponse_debut[1]:
                         ascii_caractere = ord(reponse[0])
                         if ord("a") <= ascii_caractere <= ord('z'):
                             reponse = reponse_debut[0] + chr(ascii_caractere - (ord("a") - ord("A"))) + reponse[1:]
+                        else:
+                            reponse = reponse_debut[0] + reponse
+                    else:
+                        ascii_caractere = ord(reponse[0])
+                        if ord("A") <= ascii_caractere <= ord('Z'):
+                            reponse = reponse_debut[0] + chr(ascii_caractere + (ord("a") - ord("A"))) + reponse[1:]
                         else:
                             reponse = reponse_debut[0] + reponse
         else:
