@@ -6,20 +6,23 @@ Le dossier contient :
 - Un fichier README.txt (vous êtes en train de le lire)
 - Deux répertoires "speeches" et "cleaned", contenant respectivement les discours des présidents, et ces discours sans caractères spéciaux
 - Un fichier "presidents.txt", contenant (ou non) les prénoms associés aux noms des présidents
-- Un fichier Python "fonctions_matrice.py", contenant l'ensemble des fonctions à développer autour de la matrice TF-IDF et le traitement des fichiers
-- Un fichier Python "main.py", exécutant l'ensemble des fonctions nécessaires à la création de la matrice, ainsi que l'affichage du menu pour accéder aux fonctionnalités
+- Plusieurs fichiers Python :
+     ~ "main.py", chargé de l'interaction entre l'ensemble des programmes du projet avec l'utilisateur
+     ~ "traitement_fichiers.py", s'occupant du traitement des fichiers
+     ~ "calcul_tf_idf.py", s'occupant du calcul du TF et de l'IDF de chacun des mots du corpus, ainsi que du calcul de la matrice TF-IDF du corpus
+     ~ "fonctionnalites.py", chargé de réaliser les fonctionnalités proposées dans les consignes
+     ~ "generation_reponse.py", chargé de générer une réponse automatique
 
 Notice d'utilisation :
 
 Les fichiers nécessaires à la bonne exécution du programme sont :
 - Le répertoire "speeches" contenant les discours des présidents
-- Le fichier Python "fonctions_matrice.py"
-- Le fichier Python "main.py"
+- Les fichiers Python "main.py", "traitement_fichiers.py", "calcul_tf_idf.py", "fonctionnalites.py", "generation_reponse.py"
 
 Pour lancer le programme, exécutez le fichier Python "main.py" (dans PyCharm, de préférence*), puis suivez les instructions.
 Toutes les fonctionnalités demandées sont accessibles.
 
-Si vous souhaitez ajouter un fichier contenant un discours d'un président, veuillez ajouter un fichier de nom "Nomination_[Nom du Président][Numéro du fichier**].txt" (sans les crochets), dans le dossier "speeches"
+Si vous souhaitez ajouter un fichier contenant un discours d'un président, veuillez ajouter un fichier de nom "Nomination_[Nom du Président][Numéro du fichier**].txt" (sans les crochets), dans le dossier "speeches". Exécuter le fichier "main.py" se chargera du reste.
 
 *L'affichage de la matrice TF-IDF (Fonctionnalité n°9) se fait correctement dans les consoles/terminaux sur lesquels on peut se déplacer horizontalement (et qui ne dépendent donc pas de la largeur de la fenêtre). L'affichage fonctionne très bien avec la console de PyCharm.
 
