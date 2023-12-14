@@ -1,29 +1,39 @@
+"""
+"My first ChatBot"
+Réalisé par Clément PINTO RIBEIRO & Ismaël RADOUANE
+
+Ce fichier est le fichier principal du projet. Il est chargé de l'interaction entre l'ensemble des programmes du projet
+avec l'utilisateur (affichage des fonctionnalités, interactions avec le ChatBot, etc.)
+"""
+
+
+import generation_reponse
+import fonctionnalites as fcts
+import traitement_fichiers as tt_fich
+import calcul_tf_idf as tf_idf
+
 import os
-import fonctions_matrice as fct_mat
 
 
-# Fonction permettant d'accéder au ChatBot
 def acceder_chatbot(noms_fichiers, nom_repertoire_nettoye, input_utilisateur, liste_mots_corpus, idf_total,
                     matrice_corpus, nom_repertoire_discours):
-    print("\n" + fct_mat.affiner_reponse(noms_fichiers, nom_repertoire_nettoye, input_utilisateur, liste_mots_corpus,
-                                         idf_total, matrice_corpus, nom_repertoire_discours))
+    print("\n" + generation_reponse.affiner_reponse(noms_fichiers, nom_repertoire_nettoye, input_utilisateur,
+                                                    liste_mots_corpus, idf_total, matrice_corpus,
+                                                    nom_repertoire_discours))
 
 
-# Fonction permettant d'afficher le contenu du fichier "README.txt"
 def fonctionnalite_1():
     with open("README.txt", "r", encoding="utf-8") as fichier:
         # Ouverture du fichier avec l'encodage "utf-8" afin de conserver les accents
         print(fichier.read())
 
 
-# Afficher l'ensemble des présidents présents dans le corpus de documents sous la forme de liste
 def fonctionnalite_2(noms_presidents):
     print("Les noms des présidents présents dans le corpus de documents sont :")
     for nom_president in noms_presidents:
         print("- " + nom_president)
 
 
-# Afficher l'ensemble des prénoms des présidents et/ou les modifier
 def fonctionnalite_3(nom_fichier_presidents, noms_presidents):
     if not os.path.isfile(nom_fichier_presidents):  # Si le fichier "presidents.txt" n'existe pas, le créer
         # Le paramètre "x" permet de créer le fichier s'il n'existe pas
@@ -67,21 +77,19 @@ def fonctionnalite_3(nom_fichier_presidents, noms_presidents):
             modif_prenoms()
 
 
-# Fonctionnalité n°4 (même principe que la fonctionnalité n°2)
 def fonctionnalite_4(liste_mots_corpus, noms_fichiers, matrice):
     print("Les mots les moins importants dans le corpus de documents sont :")
-    for mot in fct_mat.tf_idf_nul(liste_mots_corpus, noms_fichiers, matrice):
+    for mot in fcts.tf_idf_nul(liste_mots_corpus, noms_fichiers, matrice):
         print("- " + mot)
 
 
-# Fonctionnalité n°5 (même principe que la fonctionnalité n°2)
 def fonctionnalite_5(liste_mots_corpus, noms_fichiers, matrice):
     print("Les mots ayant le score TF-IDF le plus élevé sont :")
-    for mot in fct_mat.tf_idf_max(liste_mots_corpus, noms_fichiers, matrice):
+    for mot in fcts.tf_idf_max(liste_mots_corpus, noms_fichiers, matrice):
         print("- " + mot)
 
 
-def fonctionnalite_6(noms_presidents, liste_mots_corpus, noms_fichiers, matrice, nom_repertoire):  # Fonctionnalité n°6
+def fonctionnalite_6(noms_presidents, liste_mots_corpus, noms_fichiers, matrice, nom_repertoire):
     reponse_valide = False
 
     while not reponse_valide:  # Tant que l'utilisateur n'entre pas un nom de président présent dans le corpus
@@ -89,8 +97,8 @@ def fonctionnalite_6(noms_presidents, liste_mots_corpus, noms_fichiers, matrice,
 
         if nom_president in noms_presidents:  # Si le président existe, on affiche ses mots les plus répétés
             reponse_valide = True
-            liste_mot_max_pres = fct_mat.mot_max_president(liste_mots_corpus, noms_fichiers, matrice, nom_president,
-                                                           nom_repertoire)
+            liste_mot_max_pres = fcts.mot_max_president(liste_mots_corpus, noms_fichiers, matrice, nom_president,
+                                                        nom_repertoire)
             print("\nLes mots les plus répétés par le président", nom_president, "sont :")
             for mot in liste_mot_max_pres:
                 print("- " + mot)
@@ -103,9 +111,9 @@ def fonctionnalite_6(noms_presidents, liste_mots_corpus, noms_fichiers, matrice,
             print(noms_presidents[-1] + ")\n")
 
 
-def fonctionnalite_7(noms_fichiers, nom_repertoire):  # Fonctionnalité n°7
+def fonctionnalite_7(noms_fichiers, nom_repertoire):
     mot_recherche = input("Entrez le mot recherché : ")
-    return_mot_enonce_president = fct_mat.mot_enonce_president(noms_fichiers, nom_repertoire, mot_recherche)
+    return_mot_enonce_president = fcts.mot_enonce_president(noms_fichiers, nom_repertoire, mot_recherche)
 
     if not return_mot_enonce_president[0]:  # Si la liste contenant les présidents qui ont énoncé le mot est vide :
         print('\nAucun président n\'a énoncé le mot "' + mot_recherche + '".')
@@ -119,19 +127,18 @@ def fonctionnalite_7(noms_fichiers, nom_repertoire):  # Fonctionnalité n°7
             print("- " + nom_president)
 
 
-def fonctionnalite_8(noms_fichiers, nom_repertoire):  # Fonctionnalité n°8
+def fonctionnalite_8(noms_fichiers, nom_repertoire):
     mot_recherche = input("Entrez le mot recherché : ")
     print('\nLe premier président à utiliser le mot "' + mot_recherche + '" est :',
-          fct_mat.premier_president_mot(noms_fichiers, nom_repertoire, mot_recherche))
+          fcts.premier_president_mot(noms_fichiers, nom_repertoire, mot_recherche))
 
 
-def fonctionnalite_9(liste_mots_corpus, noms_fichiers, matrice, nom_repertoire):  # Fonctionnalité n°9
+def fonctionnalite_9(liste_mots_corpus, noms_fichiers, matrice, nom_repertoire):
     print("Les mots évoqués par tous les présidents (sauf les mots dits \"non importants\") sont :")
-    for mot in fct_mat.mots_tous_presidents(liste_mots_corpus, noms_fichiers, matrice, nom_repertoire):
+    for mot in fcts.mots_tous_presidents(liste_mots_corpus, noms_fichiers, matrice, nom_repertoire):
         print("- " + mot)
 
 
-# Fonctionnalité n°10 : Affichage de la matrice TF-IDF sous forme de tableau
 def fonctionnalite_10(noms_fichiers, liste_mots_corpus, matrice):
 
     # Fonction interne permettant de retourner le mot le plus long d'une liste de mots
@@ -185,26 +192,25 @@ def fonctionnalite_10(noms_fichiers, liste_mots_corpus, matrice):
         fermer_tableau()
 
 
-# --------------------------------------------- Fonction principale --------------------------------------------- #
+# ----------------------------------------------- Fonction principale ----------------------------------------------- #
 def main():
     # Initialisations des constantes : noms de répertoires qui peuvent potentiellement changer et noms de fichiers
     NOM_REPERTOIRE_DISCOURS = "speeches"
     NOM_REPERTOIRE_NETTOYE = "cleaned"
     NOM_FICHIER_PRESIDENTS = "presidents.txt"  # Les prénoms à partir des noms seront stockés dans ce fichier
 
-    noms_fichiers = fct_mat.liste_fichiers(NOM_REPERTOIRE_DISCOURS, "txt")
+    noms_fichiers = tt_fich.liste_fichiers(NOM_REPERTOIRE_DISCOURS, "txt")
 
-    noms_presidents = fct_mat.recup_noms_presidents(noms_fichiers)
+    noms_presidents = fcts.recup_noms_presidents(noms_fichiers)
 
     # Nettoyage des fichiers (suppression des caractères spéciaux, etc.)
-    fct_mat.nettoyage_complet_fichiers(NOM_REPERTOIRE_NETTOYE, noms_fichiers, NOM_REPERTOIRE_DISCOURS)
+    tt_fich.nettoyage_complet_fichiers(NOM_REPERTOIRE_NETTOYE, noms_fichiers, NOM_REPERTOIRE_DISCOURS)
 
     # On récupère l'IDF de tous les mots ici puisqu'il est commun à tous les fichiers
-    idf_total = fct_mat.calcul_idf_total(noms_fichiers, NOM_REPERTOIRE_NETTOYE)
+    idf_total = tf_idf.calcul_idf_total(noms_fichiers, NOM_REPERTOIRE_NETTOYE)
 
-    # On récupère le tuple retourné par la fct "creation_matrice_corpus" (Liste des fichiers, liste des mots, matrice)
-    liste_mots_corpus, matrice_corpus = fct_mat.creation_matrice_corpus(noms_fichiers, NOM_REPERTOIRE_NETTOYE,
-                                                                        idf_total)
+    # On récupère le tuple retourné par la fct "creation_matrice_corpus" (liste des fichiers, liste des mots, matrice)
+    liste_mots_corpus, matrice_corpus = tf_idf.creation_matrice_corpus(noms_fichiers, NOM_REPERTOIRE_NETTOYE, idf_total)
 
     print("\nBienvenue sur le ChatBot de Clément PINTO RIBEIRO et de Ismaël RADOUANE.\n")
 
@@ -310,5 +316,5 @@ def main():
                 demander_premier_numero = False
 
 
-if __name__ == "__main__":  # Exécution du programme principal (fonction "main()")
+if __name__ == "__main__":  # Exécution du programme principal (appel de la fonction "main()")
     main()
