@@ -24,6 +24,6 @@ Toutes les fonctionnalités demandées sont accessibles.
 
 Si vous souhaitez ajouter un fichier contenant un discours d'un président, veuillez ajouter un fichier de nom "Nomination_[Nom du Président][Numéro du fichier**].txt" (sans les crochets), dans le dossier "speeches". Exécuter le fichier "main.py" se chargera du reste.
 
-*L'affichage de la matrice TF-IDF (Fonctionnalité n°9) se fait correctement dans les consoles/terminaux sur lesquels on peut se déplacer horizontalement (et qui ne dépendent donc pas de la largeur de la fenêtre). L'affichage fonctionne très bien avec la console de PyCharm.
+*L'affichage de la matrice TF-IDF se fait correctement dans les consoles/terminaux sur lesquels on peut se déplacer horizontalement (et qui ne dépendent donc pas de la largeur de la fenêtre). L'affichage fonctionne très bien avec la console de PyCharm.
 
 **L'ajout du numéro du fichier contenant le discours d'un certain président peux être fait uniquement dans le cas où un même président possède plusieurs fichiers contenant ses discours
