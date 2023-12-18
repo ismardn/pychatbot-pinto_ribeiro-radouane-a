@@ -11,6 +11,12 @@ import math
 
 
 def calcul_tf(chaine):  # Fonction pour calculer le TF d'une chaîne
+    """
+    Cette fonction calcule le Term Frequency (TF) d'une chaîne de texte.
+
+    :param chaine: Chaîne de texte.
+    :return: Dictionnaire associant à chaque mot sa valeur TF dans la chaîne.
+    """
     liste_mots = chaine.split()
 
     dict_tf = {}
@@ -25,7 +31,13 @@ def calcul_tf(chaine):  # Fonction pour calculer le TF d'une chaîne
 
 
 def calcul_tf_total(noms_fichiers, nom_repertoire):  # Application de la fonction "calcul_tf" à tout les fichiers
-    # Les valeurs TF sont stockées sous la forme de N dictionnaires avec N = nombre de fichiers
+    """
+    Applique la fonction "calcul_tf" à tous les fichiers du corpus.
+
+    :param noms_fichiers: Liste des noms de fichiers dans le corpus.
+    :param nom_repertoire: Répertoire où se trouvent les fichiers du corpus.
+    :return: Liste des valeurs TF pour chaque fichier sous la forme de N dictionnaires (N = nombre de fichiers).
+    """
     liste_tf = []
 
     for nom_fichier in noms_fichiers:
@@ -37,9 +49,17 @@ def calcul_tf_total(noms_fichiers, nom_repertoire):  # Application de la fonctio
 
 
 def calcul_idf_total(noms_fichiers, nom_repertoire):  # Fonction permettant de calculer le score IDF de chaque mot
+    """
+    Calcul du score IDF pour chaque mot dans le corpus.
+
+    :param noms_fichiers: Liste des noms de fichiers dans le corpus.
+    :param nom_repertoire: Répertoire où se trouvent les fichiers du corpus.
+    :return: Dictionnaire associant à chaque mot son score IDF.
+    """
     contenu_fichiers_liste = []
     contenu_fichiers = ""
 
+    # Lecture des fichiers pour construire le corpus et la liste de mots
     for nom_fichier in noms_fichiers:
         with open(nom_repertoire + "/" + nom_fichier, "r", encoding="utf-8") as fichier:
             contenu_fichier = fichier.read()
@@ -49,12 +69,14 @@ def calcul_idf_total(noms_fichiers, nom_repertoire):  # Fonction permettant de c
     chaine_split = contenu_fichiers.split()
     liste_mots = []
 
+    # Construction de la liste de mots unique dans le corpus
     for mot in chaine_split:
         if mot not in liste_mots:
             liste_mots.append(mot)
 
-    dict_idf = {}  # Réutilisation d'un dictionnaire ici aussi pour associer à chaque mot son score
+    dict_idf = {}  # Initialisation du dictionnaire pour stocker les scores IDF
 
+    # Calcul du score IDF pour chaque mot
     for mot in liste_mots:
 
         nombre_fichiers_mot = 0
@@ -64,23 +86,34 @@ def calcul_idf_total(noms_fichiers, nom_repertoire):  # Fonction permettant de c
 
         dict_idf[mot] = math.log10(len(noms_fichiers) / nombre_fichiers_mot)  # Calcul de l'IDF
 
-    return dict_idf  # IDF est le même pour tous les fichiers; donc retour d'un unique dictionnaire
+    return dict_idf
 
 
-# Création de notre matrcice associant un score TF-IDF pour chaque mots en fonction des fichiers
 def creation_matrice_corpus(noms_fichiers, nom_repertoire, idf_total):
+    """
+    Crée une matrice de TF-IDF pour chaque mot dans le corpus.
+
+    :param noms_fichiers: Liste des noms de fichiers dans le corpus.
+    :param nom_repertoire: Répertoire où se trouvent les fichiers du corpus.
+    :param idf_total: Dictionnaire associant à chaque mot son score IDF.
+    :return: Tuple composé de la liste des mots et de la matrice de TF-IDF associée.
+    """
+    # Calcul des valeurs TF pour chaque fichier
     valeurs_tf_fichier = calcul_tf_total(noms_fichiers, nom_repertoire)
 
-    liste_mots = [mot for mot in idf_total]  # On récupère tous les mots du corpus
+    # On récupère tous les mots du corpus
+    liste_mots = [mot for mot in idf_total]
 
     contenu_fichiers_liste = []
 
+    # Lecture des fichiers pour construire une liste de listes contenant les mots de chaque fichier
     for nom_fichier in noms_fichiers:
         with open(nom_repertoire + "/" + nom_fichier, "r", encoding="utf-8") as fichier:
             contenu_fichiers_liste.append(fichier.read().split())
 
     matrice = []
 
+    # Construction de la matrice de TF-IDF pour chaque mot
     for mot in liste_mots:
 
         tfs_idf_mot = []

@@ -17,79 +17,145 @@ import os
 
 def acceder_chatbot(noms_fichiers, nom_repertoire_nettoye, input_utilisateur, liste_mots_corpus, idf_total,
                     matrice_corpus, nom_repertoire_discours):
+    """
+    Fonction pour accéder au chatbot, générer et afficher une réponse à partir de l'input utilisateur.
+
+    :param noms_fichiers: La liste des noms de fichiers.
+    :param nom_repertoire_nettoye: Le nom du répertoire où les fichiers nettoyés sont enregistrés.
+    :param input_utilisateur: L'input de l'utilisateur (question).
+    :param liste_mots_corpus: La liste des mots dans le corpus.
+    :param idf_total: Le score IDF total pour chaque mot.
+    :param matrice_corpus: La matrice du corpus.
+    :param nom_repertoire_discours: Le répertoire des discours originaux.
+    La fonction ne retourne rien puisqu'il s'agit ici d'afficher du texte dans la console.
+    """
     print("\n" + generation_reponse.affiner_reponse(noms_fichiers, nom_repertoire_nettoye, input_utilisateur,
                                                     liste_mots_corpus, idf_total, matrice_corpus,
                                                     nom_repertoire_discours))
 
 
 def fonctionnalite_1():
+    """
+    Fonctionnalité 1 : Affiche le contenu du fichier README.txt.
+
+    La fonction ouvre le fichier README.txt en mode lecture avec l'encodage "utf-8" pour conserver les accents
+    puis affiche le contenu du fichier.
+    La fonction ne retourne rien puisqu'il s'agit ici d'afficher du texte dans la console.
+    """
     with open("README.txt", "r", encoding="utf-8") as fichier:
-        # Ouverture du fichier avec l'encodage "utf-8" afin de conserver les accents
         print(fichier.read())
 
 
 def fonctionnalite_2(noms_presidents):
+    """
+    Affiche les noms des présidents présents dans le corpus de documents.
+
+    :param noms_presidents: La liste des noms des présidents à afficher.
+    La fonction ne retourne rien puisqu'il s'agit ici d'afficher du texte dans la console.
+    """
     print("Les noms des présidents présents dans le corpus de documents sont :")
     for nom_president in noms_presidents:
         print("- " + nom_president)
 
 
 def fonctionnalite_3(nom_fichier_presidents, noms_presidents):
-    if not os.path.isfile(nom_fichier_presidents):  # Si le fichier "presidents.txt" n'existe pas, le créer
-        # Le paramètre "x" permet de créer le fichier s'il n'existe pas
+    """
+    Gère l'association de prénoms aux noms des présidents dans un fichier externe "presidents.txt".
+
+    :param nom_fichier_presidents: Le nom du fichier qui stocke les associations entre noms et prénoms des présidents.
+    :param noms_presidents: La liste des noms des présidents.
+    La fonction ne retourne rien puisqu'il s'agit ici d'afficher du texte dans la console.
+    """
+    # Crée le fichier "presidents.txt" s'il n'existe pas
+    if not os.path.isfile(nom_fichier_presidents):
         open(nom_fichier_presidents, "x", encoding="utf-8")
 
+    # Lit le contenu du fichier "presidents.txt"
     with open(nom_fichier_presidents, "r", encoding="utf-8") as fichier:
         contenu_fichier = fichier.read()
 
     tous_prenoms = True
+
+    # Vérifie si chaque nom de président a un prénom associé dans le fichier "presidents.txt"
     for nom_president in noms_presidents:
         if nom_president not in contenu_fichier:
-            # Si un le nom d'un président récupéré dans les noms des fichiers n'est pas dans le fichier "presidents.txt"
-            # Alors le contenu du fichier doit être modifié donc variable "tous_prenoms" passée à False
             tous_prenoms = False
 
-    def modif_prenoms():  # Fonction interne qui permet d'associer des prénoms aux noms des présidents
+    def modif_prenoms():
+        """
+        Fonction interne pour ajouter des prénoms associés aux noms des présidents dans le fichier "presidents.txt".
+        La fonction ne retourne rien puisqu'il s'agit ici d'afficher du texte dans la console.
+        """
         contenu_fichier_pres = ""
+
+        # Pour chaque nom de président, l'utilisateur est invité à entrer le prénom correspondant
         for nom_pres in noms_presidents:
             print("Entrez le prénom que vous souhaitez associer à", nom_pres, ": ", end="")
-            # On stocke les prénoms des présidents sous la forme "nom1:prénom1\nnom2:prénom2\n..."
             contenu_fichier_pres += nom_pres + ":" + input() + "\n"
+
+        # Écriture des nouvelles associations dans le fichier "presidents.txt"
         with open(nom_fichier_presidents, "w", encoding="utf-8") as fichier_pres:
             fichier_pres.write(contenu_fichier_pres)
 
+    # Si tous les présidents ont un prénom associé, on les affiche
     if not tous_prenoms:
         input_utilisateur = input("Certains présidents n'ont pas de prénoms associés à leur nom.\n"
                                   "Entrez \"o\" pour ajouter les prénoms : ")
         if input_utilisateur == "o":
             modif_prenoms()
-    else:  # Si tous les présidents ont un prénom associé, alors on se contente de les afficher
+    else:
         print("Les prénoms associés aux présidents sont :")
         with open(nom_fichier_presidents, "r", encoding="utf-8") as fichier:
             for ligne in fichier:
-                ligne_split = ligne.split(":")  # On récupère les noms/prénoms sous forme de listes
-                # Afin de les afficher sous la forme - Nom : Prénom
-                print("- " + ligne_split[0] + " : " + ligne_split[1], end="")  # end="" car ligne_split[1] contient "\n"
+                ligne_split = ligne.split(":")
+                print("- " + ligne_split[0] + " : " + ligne_split[1], end="")
 
-        input_utilisateur = input("\nSouhaitez vous modifier les prénoms associés aux noms des présidents ?\n"
+        # L'utilisateur a la possibilité de modifier les prénoms associés aux noms des présidents
+        input_utilisateur = input("\nSouhaitez-vous modifier les prénoms associés aux noms des présidents ?\n"
                                   "Entrez \"o\" pour modifier les prénoms : ")
-        if input_utilisateur == "o":  # On propose à l'utilisateur de modifier les prénoms s'il le souhaite
+        if input_utilisateur == "o":
             modif_prenoms()
 
 
 def fonctionnalite_4(liste_mots_corpus, noms_fichiers, matrice):
+    """
+    Affiche les mots avec un score TF-IDF nul dans le corpus de documents.
+
+    :param liste_mots_corpus: La liste des mots dans le corpus.
+    :param noms_fichiers: La liste des noms de fichiers du corpus.
+    :param matrice: La matrice TF-IDF du corpus.
+    La fonction ne retourne rien puisqu'il s'agit ici d'afficher du texte dans la console.
+    """
     print("Les mots les moins importants dans le corpus de documents sont :")
     for mot in fcts.tf_idf_nul(liste_mots_corpus, noms_fichiers, matrice):
         print("- " + mot)
 
 
 def fonctionnalite_5(liste_mots_corpus, noms_fichiers, matrice):
+    """
+    Affiche les mots avec le score TF-IDF le plus élevé dans le corpus de documents.
+
+    :param liste_mots_corpus: La liste des mots dans le corpus.
+    :param noms_fichiers: La liste des noms de fichiers du corpus.
+    :param matrice: La matrice TF-IDF du corpus.
+    La fonction ne retourne rien puisqu'il s'agit ici d'afficher du texte dans la console.
+    """
     print("Les mots ayant le score TF-IDF le plus élevé sont :")
     for mot in fcts.tf_idf_max(liste_mots_corpus, noms_fichiers, matrice):
         print("- " + mot)
 
 
 def fonctionnalite_6(noms_presidents, liste_mots_corpus, noms_fichiers, matrice, nom_repertoire):
+    """
+    Affiche les mots les plus répétés par un président choisi dans le corpus.
+
+    :param noms_presidents: Liste des noms de présidents présents dans le corpus.
+    :param liste_mots_corpus: Liste des mots dans le corpus.
+    :param noms_fichiers: Liste des noms de fichiers dans le corpus.
+    :param matrice: Matrice TF-IDF du corpus.
+    :param nom_repertoire: Le nom du répertoire où les fichiers sont stockés.
+    La fonction ne retourne rien puisqu'il s'agit ici d'afficher du texte dans la console.
+    """
     reponse_valide = False
 
     while not reponse_valide:  # Tant que l'utilisateur n'entre pas un nom de président présent dans le corpus
@@ -97,6 +163,7 @@ def fonctionnalite_6(noms_presidents, liste_mots_corpus, noms_fichiers, matrice,
 
         if nom_president in noms_presidents:  # Si le président existe, on affiche ses mots les plus répétés
             reponse_valide = True
+            # Appel de la fonction qui récupère les mots les plus répétés par le président dans les fichiers du corpus
             liste_mot_max_pres = fcts.mot_max_president(liste_mots_corpus, noms_fichiers, matrice, nom_president,
                                                         nom_repertoire)
             print("\nLes mots les plus répétés par le président", nom_president, "sont :")
@@ -112,10 +179,20 @@ def fonctionnalite_6(noms_presidents, liste_mots_corpus, noms_fichiers, matrice,
 
 
 def fonctionnalite_7(noms_fichiers, nom_repertoire):
+    """
+    Affiche les présidents qui ont énoncé un mot donné, ainsi que ceux qui l'ont énoncé le plus de fois.
+
+    :param noms_fichiers: Liste des noms de fichiers dans le corpus.
+    :param nom_repertoire: Le nom du répertoire où les fichiers sont stockés.
+    La fonction ne retourne rien puisqu'il s'agit ici d'afficher du texte dans la console.
+    """
+    # Demande à l'utilisateur d'entrer le mot recherché
     mot_recherche = input("Entrez le mot recherché : ")
+
+    # Appel de la fonction qui récupère les présidents ayant énoncé le mot et ceux qui l'ont énoncé le plus de fois
     return_mot_enonce_president = fcts.mot_enonce_president(noms_fichiers, nom_repertoire, mot_recherche)
 
-    if not return_mot_enonce_president[0]:  # Si la liste contenant les présidents qui ont énoncé le mot est vide :
+    if not return_mot_enonce_president[0]:  # Si la liste des présidents qui ont énoncé le mot est vide :
         print('\nAucun président n\'a énoncé le mot "' + mot_recherche + '".')
     else:
         print('\nLes présidents qui ont énoncé le mot "' + mot_recherche + '" sont :')
@@ -128,34 +205,77 @@ def fonctionnalite_7(noms_fichiers, nom_repertoire):
 
 
 def fonctionnalite_8(noms_fichiers, nom_repertoire):
+    """
+    Affiche le premier président à avoir utilisé un mot donné.
+
+    :param noms_fichiers: Liste des noms de fichiers dans le corpus.
+    :param nom_repertoire: Le nom du répertoire où les fichiers sont stockés.
+    La fonction ne retourne rien puisqu'il s'agit ici d'afficher du texte dans la console.
+    """
+    # Demande à l'utilisateur d'entrer le mot recherché
     mot_recherche = input("Entrez le mot recherché : ")
-    print('\nLe premier président à utiliser le mot "' + mot_recherche + '" est :',
-          fcts.premier_president_mot(noms_fichiers, nom_repertoire, mot_recherche))
+
+    # Appel de la fonction qui récupère le premier président à avoir utilisé le mot
+    premier_president = fcts.premier_president_mot(noms_fichiers, nom_repertoire, mot_recherche)
+
+    if premier_president:
+        print('\nLe premier président à utiliser le mot "' + mot_recherche + '" est :', premier_president)
+    else:
+        print('\nAucun président n\'a utilisé le mot "' + mot_recherche + '".')
 
 
 def fonctionnalite_9(liste_mots_corpus, noms_fichiers, matrice, nom_repertoire):
+    """
+    Affiche les mots évoqués par tous les présidents, sauf les mots dits "non importants".
+
+    :param liste_mots_corpus: La liste des mots dans le corpus.
+    :param noms_fichiers: Liste des noms de fichiers dans le corpus.
+    :param matrice: La matrice du corpus.
+    :param nom_repertoire: Le nom du répertoire où les fichiers sont stockés.
+    La fonction ne retourne rien puisqu'il s'agit ici d'afficher du texte dans la console.
+    """
+    # Appel de la fonction qui récupère les mots évoqués par tous les présidents
+    mots_tous_presidents = fcts.mots_tous_presidents(liste_mots_corpus, noms_fichiers, matrice, nom_repertoire)
+
     print("Les mots évoqués par tous les présidents (sauf les mots dits \"non importants\") sont :")
-    for mot in fcts.mots_tous_presidents(liste_mots_corpus, noms_fichiers, matrice, nom_repertoire):
+    for mot in mots_tous_presidents:
         print("- " + mot)
 
 
 def fonctionnalite_10(noms_fichiers, liste_mots_corpus, matrice):
+    """
+    Affiche une représentation tabulaire de la matrice TF-IDF du corpus.
 
-    # Fonction interne permettant de retourner le mot le plus long d'une liste de mots
+    :param noms_fichiers: Liste des noms de fichiers dans le corpus.
+    :param liste_mots_corpus: La liste des mots dans le corpus.
+    :param matrice: La matrice TF-IDF du corpus.
+    La fonction ne retourne rien puisqu'il s'agit ici d'afficher du texte dans la console.
+    """
+
     def taille_mot_plus_long(liste_mots):
-        taille_max = 0
+        """
+        Fonction interne pour retourner la taille du mot le plus long dans une liste de mots.
 
+        :param liste_mots: Liste des mots.
+        :return: La taille du mot le plus long.
+        """
+        taille_max = 0
         for mot in liste_mots:
             longueur_mot = len(mot)
             if longueur_mot > taille_max:
                 taille_max = longueur_mot
-
         return taille_max
 
-    # Fonction interne permettant de compléter une chaîne de caractères avec des espaces en fonction d'une taille max
     def ajuster_espaces(chaine, taille_max):
+        """
+        Fonction interne pour ajuster la longueur d'une chaîne en ajoutant des espaces.
+
+        :param chaine: Chaîne de caractères à ajuster.
+        :param taille_max: Taille maximale de la chaîne.
+        :return: La chaîne ajustée.
+        """
         taille_restante = taille_max + 1 - len(chaine)
-        return chaine + taille_restante * " "  # Complétion de la chaîne avec des espaces en fonction de taille_restante
+        return chaine + taille_restante * " "
 
     # Récupération des termes les plus long pour adapter le tableau
     noms_fichiers_plus_long = taille_mot_plus_long(noms_fichiers)
@@ -174,7 +294,12 @@ def fonctionnalite_10(noms_fichiers, liste_mots_corpus, matrice):
         print("| " + ajuster_espaces(nom_fichier, noms_fichiers_plus_long), end="")
     print("|")
 
-    def fermer_tableau():  # Fonction interne permettant de fermer le tableau à chaque nouvelle ligne
+    def fermer_tableau():
+        """
+        Fonction interne pour fermer le tableau à chaque nouvelle ligne.
+
+        La fonction ne retourne rien puisqu'il s'agit ici d'afficher du texte dans la console.
+        """
         print((mot_plus_long + len("  ")) * "_", end="")
         for _ in range(len(noms_fichiers)):
             print("|__" + noms_fichiers_plus_long * "_", end="")
@@ -194,6 +319,11 @@ def fonctionnalite_10(noms_fichiers, liste_mots_corpus, matrice):
 
 # ----------------------------------------------- Fonction principale ----------------------------------------------- #
 def main():
+    """
+    Fonction principale du programme.
+
+    La fonction ne retourne rien puisqu'il s'agit ici d'afficher du texte dans la console.
+    """
     # Initialisations des constantes : noms de répertoires qui peuvent potentiellement changer et noms de fichiers
     NOM_REPERTOIRE_DISCOURS = "speeches"
     NOM_REPERTOIRE_NETTOYE = "cleaned"
