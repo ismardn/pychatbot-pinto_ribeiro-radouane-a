@@ -20,7 +20,6 @@ def liste_fichiers(repertoire, extension):
     """
     noms_fichiers = []
 
-    # Pour chaque fichier dans le répertoire
     for nom_fichier in os.listdir(repertoire):
         if nom_fichier.endswith(extension):
             # Si le fichier a l'extension spécifiée, on l'ajoute à la liste "noms_fichiers"
@@ -40,7 +39,6 @@ def en_minuscule(chaine):
 
     for caractere in chaine:
         if ord("A") <= ord(caractere) <= ord('Z'):
-            # Si le caractère est une majuscule, on le convertit en minuscule
             nouvelle_chaine += chr(ord(caractere) + ord("a") - ord("A"))
         else:
             nouvelle_chaine += caractere
