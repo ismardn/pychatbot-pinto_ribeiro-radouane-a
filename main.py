@@ -66,7 +66,6 @@ def fonctionnalite_3(nom_fichier_presidents, noms_presidents):
     :param noms_presidents: La liste des noms des présidents.
     La fonction ne retourne rien puisqu'il s'agit ici d'afficher du texte dans la console.
     """
-    # Crée le fichier "presidents.txt" s'il n'existe pas
     if not os.path.isfile(nom_fichier_presidents):
         open(nom_fichier_presidents, "x", encoding="utf-8")
 
@@ -88,12 +87,10 @@ def fonctionnalite_3(nom_fichier_presidents, noms_presidents):
         """
         contenu_fichier_pres = ""
 
-        # Pour chaque nom de président, l'utilisateur est invité à entrer le prénom correspondant
         for nom_pres in noms_presidents:
             print("Entrez le prénom que vous souhaitez associer à", nom_pres, ": ", end="")
             contenu_fichier_pres += nom_pres + ":" + input() + "\n"
 
-        # Écriture des nouvelles associations dans le fichier "presidents.txt"
         with open(nom_fichier_presidents, "w", encoding="utf-8") as fichier_pres:
             fichier_pres.write(contenu_fichier_pres)
 
@@ -158,7 +155,7 @@ def fonctionnalite_6(noms_presidents, liste_mots_corpus, noms_fichiers, matrice,
     """
     reponse_valide = False
 
-    while not reponse_valide:  # Tant que l'utilisateur n'entre pas un nom de président présent dans le corpus
+    while not reponse_valide:
         nom_president = input("Entrez le nom du président choisi : ")
 
         if nom_president in noms_presidents:  # Si le président existe, on affiche ses mots les plus répétés
@@ -192,7 +189,7 @@ def fonctionnalite_7(noms_fichiers, nom_repertoire):
     # Appel de la fonction qui récupère les présidents ayant énoncé le mot et ceux qui l'ont énoncé le plus de fois
     return_mot_enonce_president = fcts.mot_enonce_president(noms_fichiers, nom_repertoire, mot_recherche)
 
-    if not return_mot_enonce_president[0]:  # Si la liste des présidents qui ont énoncé le mot est vide :
+    if not return_mot_enonce_president[0]:
         print('\nAucun président n\'a énoncé le mot "' + mot_recherche + '".')
     else:
         print('\nLes présidents qui ont énoncé le mot "' + mot_recherche + '" sont :')
@@ -277,18 +274,15 @@ def fonctionnalite_10(noms_fichiers, liste_mots_corpus, matrice):
         taille_restante = taille_max + 1 - len(chaine)
         return chaine + taille_restante * " "
 
-    # Récupération des termes les plus long pour adapter le tableau
     noms_fichiers_plus_long = taille_mot_plus_long(noms_fichiers)
     mot_plus_long = taille_mot_plus_long(liste_mots_corpus)
 
     # Affichage de x * " " pour correspondre à la taille du plus grand mot
     print((mot_plus_long + len("|  |")) * " ", end="")
     for _ in range(len(noms_fichiers) - 1):
-        # Puis x * "_" en fonctione des bordures, espaces et tailles des noms de fichiers
         print((noms_fichiers_plus_long + len(" | ")) * "_", end="")
     print((noms_fichiers_plus_long + len("  ")) * "_")
 
-    # Deuxième ligne; premier espace correspondant à la taille du plus grand mot
     print((mot_plus_long + len("|  ")) * " ", end="")
     for nom_fichier in noms_fichiers:  # Affichage des noms des fichiers avec bordures
         print("| " + ajuster_espaces(nom_fichier, noms_fichiers_plus_long), end="")
@@ -395,7 +389,6 @@ def main():
 
                 print()
 
-                # En fonction de la réponse de l'utilisateur, on exécute la fonctionnalité associée
                 if reponse_utilisateur == "1":
                     fonctionnalite_1()
 
