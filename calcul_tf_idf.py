@@ -10,7 +10,7 @@ du calcul de la matrice TF-IDF du corpus.
 import math
 
 
-def calcul_tf(chaine):  # Fonction pour calculer le TF d'une chaîne
+def calcul_tf(chaine):
     """
     Cette fonction calcule le Term Frequency (TF) d'une chaîne de texte.
 
@@ -30,7 +30,7 @@ def calcul_tf(chaine):  # Fonction pour calculer le TF d'une chaîne
     return dict_tf
 
 
-def calcul_tf_total(noms_fichiers, nom_repertoire):  # Application de la fonction "calcul_tf" à tout les fichiers
+def calcul_tf_total(noms_fichiers, nom_repertoire):
     """
     Applique la fonction "calcul_tf" à tous les fichiers du corpus.
 
@@ -48,7 +48,7 @@ def calcul_tf_total(noms_fichiers, nom_repertoire):  # Application de la fonctio
     return liste_tf
 
 
-def calcul_idf_total(noms_fichiers, nom_repertoire):  # Fonction permettant de calculer le score IDF de chaque mot
+def calcul_idf_total(noms_fichiers, nom_repertoire):
     """
     Calcul du score IDF pour chaque mot dans le corpus.
 
@@ -100,7 +100,6 @@ def creation_matrice_corpus(noms_fichiers, nom_repertoire, idf_total):
     """
     # Calcul des valeurs TF pour chaque fichier
     valeurs_tf_fichier = calcul_tf_total(noms_fichiers, nom_repertoire)
-
 
     liste_mots = [mot for mot in idf_total]
 

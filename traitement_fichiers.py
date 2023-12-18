@@ -58,7 +58,7 @@ def creer_fichiers_minuscule(noms_fichiers, nom_repertoire_discours, nom_reperto
     for nom_fichier in noms_fichiers:
         with open(nom_repertoire_discours + "/" + nom_fichier, "r", encoding="utf-8") as fichier_ancien, \
                 open(nom_repertoire_nettoye + "/" + nom_fichier, "w", encoding="utf-8") as fichier_nettoye:
-            # Applique la fonction en_minuscule sur chaque fichier du dossier des discours
+            # On applique la fonction en_minuscule sur chaque fichier du dossier des discours
             fichier_nettoye.write(en_minuscule(fichier_ancien.read()))
 
 
