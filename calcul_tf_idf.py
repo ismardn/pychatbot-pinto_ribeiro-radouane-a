@@ -23,9 +23,9 @@ def calcul_tf(chaine):  # Fonction pour calculer le TF d'une chaîne
 
     for mot in liste_mots:  # Mise en place d'un dictionnaire associant à chaque mot sa valeur TF
         if mot not in dict_tf:
-            dict_tf[mot] = 1  # Création d'une nouvelle clé si le mot n'existe pas
+            dict_tf[mot] = 1
         else:
-            dict_tf[mot] += 1  # Incrémentation de sa valeur, sinon
+            dict_tf[mot] += 1
 
     return dict_tf
 
@@ -74,7 +74,7 @@ def calcul_idf_total(noms_fichiers, nom_repertoire):  # Fonction permettant de c
         if mot not in liste_mots:
             liste_mots.append(mot)
 
-    dict_idf = {}  # Initialisation du dictionnaire pour stocker les scores IDF
+    dict_idf = {}
 
     # Calcul du score IDF pour chaque mot
     for mot in liste_mots:
@@ -101,7 +101,7 @@ def creation_matrice_corpus(noms_fichiers, nom_repertoire, idf_total):
     # Calcul des valeurs TF pour chaque fichier
     valeurs_tf_fichier = calcul_tf_total(noms_fichiers, nom_repertoire)
 
-    # On récupère tous les mots du corpus
+
     liste_mots = [mot for mot in idf_total]
 
     contenu_fichiers_liste = []
