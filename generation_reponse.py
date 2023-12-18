@@ -52,7 +52,6 @@ def mot_dans_corpus(noms_fichiers, nom_repertoire, question):
     # Formatage de la question en utilisant une fonction externe
     question_formatee = formater_question(question)
 
-    # Recherche des mots de la question dans la liste des mots du corpus
     for mot in question_formatee:
         if mot in contenus_fichiers_split:
             mot_corpus.append(mot)
@@ -84,7 +83,6 @@ def tf_question(noms_fichiers, nom_repertoire, question, liste_mots_corpus):
     for mot in mot_corpus:
         chaine_question += mot + " "
 
-    # Calcul du score TF pour les mots de la question
     dict_tf_question = calcul_tf_idf.calcul_tf(chaine_question)
 
     # Mise à jour du dictionnaire de scores TF avec les scores calculés pour la question
@@ -109,7 +107,6 @@ def tf_idf_question(noms_fichiers, nom_repertoire, question, liste_mots_corpus, 
     # Calcul des scores TF pour les mots de la question
     tf_total = tf_question(noms_fichiers, nom_repertoire, question, liste_mots_corpus)
 
-    # Initialisation d'un vecteur pour stocker les scores TF-IDF pour chaque mot de la question
     vecteur = []
 
     # Calcul du score TF-IDF pour chaque mot de la question en utilisant les scores TF et IDF
@@ -128,7 +125,6 @@ def produit_scalaire(vecteur_a, vecteur_b):
     :return: Le produit scalaire entre les deux vecteurs.
     """
 
-    # Initialisation d'une somme pour stocker le résultat du produit scalaire
     somme = 0
 
     # Calcul du produit scalaire en parcourant les indices des vecteurs
@@ -149,11 +145,9 @@ def norme_vecteur(vecteur):
     # Initialisation d'une somme pour stocker le résultat de la norme euclidienne
     somme = 0
 
-    # Calcul de la somme des carrés des composantes du vecteur
     for indice in range(len(vecteur)):
         somme += vecteur[indice] ** 2
 
-    # Calcul de la racine carrée de la somme
     norme = math.sqrt(somme)
 
     return norme
@@ -217,18 +211,15 @@ def doc_pertinent(noms_fichiers, vecteur_question, matrice_corpus):
     :return: Le nom du document le plus pertinent.
     """
 
-    # Initialisation d'une liste pour stocker la similarité maximale et le nom du document associé
     similarite_max = [None, -1]
 
     # Calcul de la transposée de la matrice du corpus
     matrice_corpus_transposee = transposee_matrice(matrice_corpus)
 
-    # Boucle pour calculer la similarité entre le vecteur de la question et chaque document du corpus
     for indice_fichier in range(len(noms_fichiers)):
 
         similarite = calcul_similarite(vecteur_question, matrice_corpus_transposee[indice_fichier])
 
-        # Si une similarité nulle est détectée, on retourne None
         if similarite is None:
             return None
 
@@ -248,10 +239,8 @@ def tf_idf_question_max(vecteur_question, liste_mots_corpus):
     :return: Le mot avec le score TF-IDF le plus élevé dans le vecteur de la question.
     """
 
-    # Initialisation d'une liste pour stocker l'indice et la valeur maximale du vecteur
     valeurs_max = [None, -1]
 
-    # Boucle pour trouver l'indice et la valeur maximale dans le vecteur
     for indice_valeur in range(len(vecteur_question)):
         valeur = vecteur_question[indice_valeur]
         # Mise à jour des valeurs maximales si la valeur actuelle est supérieure à la maximale enregistrée
@@ -279,7 +268,6 @@ def generation_reponse(noms_fichiers, nom_repertoire_nettoye, question, liste_mo
     # Calcul du vecteur TF-IDF pour la question
     vecteur_question = tf_idf_question(noms_fichiers, nom_repertoire_nettoye, question, liste_mots_corpus, idf_total)
 
-    # Détermination du document le plus pertinent par rapport à la question
     document_question = doc_pertinent(noms_fichiers, vecteur_question, matrice_corpus)
 
     # Si le document le plus pertinent n'est pas trouvé, retourne None
@@ -289,7 +277,6 @@ def generation_reponse(noms_fichiers, nom_repertoire_nettoye, question, liste_mo
     # Détermination du mot avec le score TF-IDF le plus élevé dans le vecteur de la question
     mot_tf_idf_max = tf_idf_question_max(vecteur_question, liste_mots_corpus)
 
-    # Ouverture et lecture du contenu du document le plus pertinent
     with open(nom_repertoire_discours + "/" + document_question, "r", encoding="utf-8") as fichier:
         contenu_fichier = tt_fich.suppression_caracteres_speciaux(fichier.read(), ["\n"])
 
@@ -343,7 +330,6 @@ def affiner_reponse(noms_fichiers, nom_repertoire_nettoye, question, liste_mots_
     if reponse is None:
         reponse = "Je ne suis pas encore capable de répondre à votre message... Essayez de le reformuler !"
     else:
-        # Suppression des espaces inutiles en début et fin de la réponse
         while reponse[0] == " " or reponse[0] == "-":
             reponse = reponse[1:]
         while reponse[-1] == " ":
@@ -358,21 +344,18 @@ def affiner_reponse(noms_fichiers, nom_repertoire_nettoye, question, liste_mots_
                 reponse_debut = debut_question[debut]
                 if question_formatee[0] == debut:
                     if reponse_debut[1]:
-                        # Si la première lettre de la réponse doit être en majuscule
                         ascii_caractere = ord(reponse[0])
                         if ord("a") <= ascii_caractere <= ord('z'):
                             reponse = reponse_debut[0] + chr(ascii_caractere - (ord("a") - ord("A"))) + reponse[1:]
                         else:
                             reponse = reponse_debut[0] + reponse
                     else:
-                        # Si la première lettre de la réponse doit être en minuscule
                         ascii_caractere = ord(reponse[0])
                         if ord("A") <= ascii_caractere <= ord('Z'):
                             reponse = reponse_debut[0] + chr(ascii_caractere + (ord("a") - ord("A"))) + reponse[1:]
                         else:
                             reponse = reponse_debut[0] + reponse
         else:
-            # Si la première lettre de la réponse doit être en majuscule
             ascii_caractere = ord(reponse[0])
             if ord("a") <= ascii_caractere <= ord('z'):
                 reponse = chr(ascii_caractere - (ord("a") - ord("A"))) + reponse[1:]
