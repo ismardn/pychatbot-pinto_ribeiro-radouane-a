@@ -49,7 +49,6 @@ def recup_noms_presidents(noms_fichiers):
 
     noms_presidents = []  # Suppression des doublons
 
-    # Ajout des noms de présidents à la liste sans doublons
     for nom_president in noms_presidents_temp:
         if nom_president not in noms_presidents:
             noms_presidents.append(nom_president)
@@ -139,7 +138,6 @@ def mot_max_president(liste_mots, noms_fichiers, matrice, nom_president, nom_rep
 
     contenu_fichiers = ""
 
-    # Concaténation du contenu de tous les fichiers associés au président
     for nom_fichier in noms_fichiers:
         if nom_president in nom_fichier:
             with open(nom_repertoire + "/" + nom_fichier, "r", encoding="utf-8") as fichier:
@@ -258,7 +256,6 @@ def mots_tous_presidents(liste_mots, noms_fichiers, matrice, nom_repertoire):
     :return: Liste des mots évoqués par tous les présidents au moins une fois.
     """
 
-    # Obtient les mots avec un score TF-IDF nul
     liste_mots_non_important = tf_idf_nul(liste_mots, noms_fichiers, matrice)
 
     # Liste pour stocker le contenu des fichiers séparé en mots
@@ -274,7 +271,6 @@ def mots_tous_presidents(liste_mots, noms_fichiers, matrice, nom_repertoire):
 
     # Parcours de la liste des mots
     for mot in liste_mots:
-        # Vérifie si le mot est présent dans tous les fichiers
         mot_in_fichiers = [mot in liste_contenu_fichier_split[indice_fichier]
                            for indice_fichier in range(len(noms_fichiers))]
 
